@@ -27,7 +27,7 @@ const Root = () => {
     <BrowserRouter>
         <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/Home" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/blogPost" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
