@@ -1,0 +1,109 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    background-image: url('/public/assets/images/image.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+    z-index: 0;
+}
+.login-card {
+    background: rgba(255, 255, 255, 0.9); /* Slight white background to make text readable */
+    padding: 20px 30px; /* Larger padding for a bigger form */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Larger shadow for a better effect */
+    text-align: center;
+    width: 100%;
+    max-width: 450px; /* Increase the max width */
+    position: relative; /* Ensure the form is above the background */
+    z-index: 1; /* Form will be above the blurred background */
+    min-height: 500px; /* Fixed minimum height to ensure the form height stays consistent */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+     /* Keep form centered even if the error appears */
+  }
+.login-title {
+    color:rgba(22, 29, 81, 0.9);
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.login-subtitle {
+    color: #6c757d;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.login-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: 100%; /* Make sure the error message takes full width */
+    box-sizing: border-box; /* Ensure padding doesn't affect width calculation */
+  }
+
+.login-input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.login-input-group label {
+    display: block;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.login-button {
+    background-color: rgba(22, 29, 81, 0.9);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: rgba(22, 29, 81, 0.9);
+}
+.signup-link-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .signup-link {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .signup-link:hover {
+    color: #0056b3;
+  }
