@@ -100,7 +100,7 @@ class ApiController extends Controller
     }
 
 
-    //Update Profile function (PUT)
+    //Update Profile function (PUT)  these code
     public function updateProfile(Request $request ){
          $request->validate([
             'name'=>'string',
