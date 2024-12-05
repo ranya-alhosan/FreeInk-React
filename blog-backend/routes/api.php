@@ -26,6 +26,15 @@ Route::post('/login', [App\Http\Controllers\Api\ApiController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profile', [App\Http\Controllers\Api\ApiController::class, 'profile']);
     Route::get('/logout', [App\Http\Controllers\Api\ApiController::class, 'logout']);
-    Route::put('/update', [App\Http\Controllers\Api\ApiController::class, 'updateProfile'] );   
+    Route::put('/update', [App\Http\Controllers\Api\ApiController::class, 'updateProfile'] ); 
+        
+    Route::get('/posts', [App\Http\Controllers\Api\PostApiController::class, 'index']);
+    Route::post('/storepost', [App\Http\Controllers\Api\PostApiController::class, 'storePost']);
+    Route::put('/updatepost/{id}', [App\Http\Controllers\Api\PostApiController::class, 'updatePost']);
+    Route::delete('/deletepost/{id}', [App\Http\Controllers\Api\PostApiController::class, 'deletePost']);
+
+
+
 });
+
 
