@@ -35,8 +35,10 @@ class CommentApiController extends Controller
             $validatedData = $request->validate([
                 'content' => 'required|string',
                 'post_id' => 'required|exists:posts,id',
-                'user_id' => Auth::id(),
+                
             ]);
+
+            $validatedData['user_id'] = Auth::id();
 
             $comment = Comment::create($validatedData);
 
