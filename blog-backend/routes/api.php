@@ -25,10 +25,8 @@ Route::post('/login', [App\Http\Controllers\Api\ApiController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profile', [App\Http\Controllers\Api\ApiController::class, 'profile']);
-    Route::put('/updateuuuuuuu', [App\Http\Controllers\Api\ApiController::class, 'updateProfileuuuuuu'] );
     Route::get('/logout', [App\Http\Controllers\Api\ApiController::class, 'logout']);
     Route::put('/update', [App\Http\Controllers\Api\ApiController::class, 'updateProfile'] );
-    Route::put('/updatekijhwdkf', [App\Http\Controllers\Api\ApiController::class, 'updateProfilesdfjlhsdf'] );
     
 });
 
