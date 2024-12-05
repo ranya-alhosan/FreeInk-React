@@ -1,7 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  // Check if the token is present in localStorage
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  // Handle logout functionality
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove token from localStorage
+    setIsLoggedIn(false); // Update the state to reflect that the user is logged out
+    navigate('/login'); // Redirect to login page
+  };
+
   return (
     <div className="header_section">
       <div className="container-fluid header_main">
@@ -32,8 +52,13 @@ function Header() {
               <li className="nav-item">
                 <Link className="nav-link" to="/contact">Contact Us</Link>
               </li>
+              {/* Conditionally render Login or Logout link */}
               <li className="nav-item">
-                <Link className="nav-link" to="/login">Login</Link>
+                {isLoggedIn ? (
+                  <span className="nav-link" onClick={handleLogout}>Logout</span>
+                ) : (
+                  <Link className="nav-link" to="/login">Login</Link>
+                )}
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="#">
