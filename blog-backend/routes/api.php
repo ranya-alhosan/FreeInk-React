@@ -41,6 +41,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
     Route::get('/categories', [App\Http\Controllers\Api\CategoryApiController::class, 'index']);
-
-
 });

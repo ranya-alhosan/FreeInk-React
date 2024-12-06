@@ -58,6 +58,14 @@ function BlogPost() {
                             <div key={post.id} className="post-item">
                                 <h3>{post.title}</h3>
                                 <p>{post.content}</p>
+                                
+                                <img
+  src={`http://localhost:8000/storage/posts/${post.img}}`}
+  alt={post.title}
+  className="img-fluid"
+/>
+
+
                                 {/* Optionally display the user and category */}
                                 <p>Posted by: {post.user.name}</p>
                                 <p>Category: {post.category.name}</p>
