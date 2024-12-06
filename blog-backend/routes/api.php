@@ -33,12 +33,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/updatepost/{id}', [App\Http\Controllers\Api\PostApiController::class, 'updatePost']);
     Route::delete('/deletepost/{id}', [App\Http\Controllers\Api\PostApiController::class, 'deletePost']);
 
-<<<<<<< HEAD
     Route::get('/comments/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'index']);
-=======
-
-    Route::get('/comments', [App\Http\Controllers\Api\CommentApiController::class, 'index']);
->>>>>>> b1a0919ae4f67c9aae907d5af48c3bc450fe1ca0
     Route::post('/storecomment', [App\Http\Controllers\Api\CommentApiController::class, 'storeComment']);
     Route::put('/updatecomment/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'updateComment']);
     Route::delete('/deletecomment/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'deleteComment']);
@@ -46,11 +41,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/categories', [App\Http\Controllers\Api\CategoryApiController::class, 'index']);
 
-<<<<<<< HEAD
     Route::post('/likes', [App\Http\Controllers\Api\LikeApiController::class, 'like']);
  
     Route::post('/favorites', [App\Http\Controllers\Api\FavoriteApiController::class, 'favorite']);
-=======
 
->>>>>>> b1a0919ae4f67c9aae907d5af48c3bc450fe1ca0
+
 });
