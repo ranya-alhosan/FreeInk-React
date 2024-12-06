@@ -51,21 +51,21 @@ class PostApiController extends Controller
                 'category_id' => 'required|exists:categories,id',
                 'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-    
+
             $imagePath = null;
             if ($request->hasFile('img')) {
                 // Store the uploaded image in the 'public/posts' directory
                 $imagePath = $request->file('img')->store('posts', 'public');
             }
-    
+
             $post = Post::create([
                 'title' => $validatedData['title'],
                 'content' => $validatedData['content'],
-                'img' => $imagePath, // Save the image path
+                'img' => $imagePath ? asset('storage/' . $imagePath) : null, // Save the image path
                 'user_id' => Auth::id(),
                 'category_id' => $validatedData['category_id'],
             ]);
-    
+
             return response()->json([
                 'success' => true,
                 'data' => $post,
@@ -78,49 +78,49 @@ class PostApiController extends Controller
             ], 422);
         } catch (\Exception $e) {
             Log::error('Error creating post: ' . $e->getMessage());
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create post. Please try again later.',
             ], 500);
         }
     }
-    
+
 
     // Update an existing post
     public function updatePost(Request $request, $id)
     {
         try {
             $post = Post::find($id);
-    
+
             if (!$post || $post->user_id !== Auth::id()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Post not found or unauthorized',
                 ], 403);
             }
-    
+
             $validatedData = $request->validate([
                 'title' => 'nullable|string|max:255',
                 'content' => 'nullable|string',
                 'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'category_id' => 'nullable|exists:categories,id',
             ]);
-    
+
             if ($request->hasFile('img')) {
                 // Delete the old image if it exists
                 if ($post->img) {
                     Storage::disk('public')->delete($post->img);
                 }
-    
+
                 // Store the new image
                 $imagePath = $request->file('img')->store('posts', 'public');
                 $post->img = $imagePath; // Update the image path
             }
-    
+
             // Update the other fields
             $post->update(array_filter($validatedData));
-    
+
             return response()->json([
                 'success' => true,
                 'data' => $post,
@@ -133,14 +133,14 @@ class PostApiController extends Controller
             ], 422);
         } catch (\Exception $e) {
             Log::error('Error updating post: ' . $e->getMessage());
-    
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update post. Please try again later.',
             ], 500);
         }
     }
-    
+
 
     // Delete a post
     public function deletePost($id)
