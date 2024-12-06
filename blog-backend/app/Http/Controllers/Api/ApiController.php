@@ -13,28 +13,34 @@ use Illuminate\Support\Facades\Storage;
 class ApiController extends Controller
 {
     // Register function (POST,formData)
+
     public function register(Request $request)
     {
         try {
+            // Validate input fields
             $request->validate([
-                'name' => 'required',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/|min:8',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|confirmed|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             ]);
-
+    
+            // Assign a default image path
+            $defaultImage = 'default-profile.png'; // Ensure this file exists in the 'public' directory
+    
+            // Create the user with the default image
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'img' => $defaultImage, // Set default profile image
             ]);
-
+    
             return response()->json([
                 'status' => true,
                 'message' => 'User registered successfully',
                 'data' => $user,
             ], 201);
-
-        } catch (Exception $e) {
+        }catch(Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Registration failed',
@@ -42,7 +48,7 @@ class ApiController extends Controller
             ], 500);
         }
     }
-
+    
     // Login function (POST,formData)
     public function login(Request $request)
     {
@@ -121,64 +127,62 @@ class ApiController extends Controller
 
     // Update Profile function (PUT)
     public function updateProfile(Request $request)
-    {
-        try {
-            $request->validate([
-                'name' => 'string',
-                'email' => 'email|unique:users,email,' . auth()->id(),
-                'password' => 'confirmed',
-                'bio'=>'string',
-                'img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
+{
+    try {
+        // Validate the inputs
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . auth()->id(),
+            'password' => 'nullable|confirmed|min:8',
+            'bio' => 'nullable|string',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-            $user = auth()->user();
+        // Get the authenticated user
+        $user = auth()->user();
 
-
-
-            if ($request->hasFile('img')) {
-                // Delete the old image if it exists
-                if ($user->img) {
-                    Storage::delete($user->img);
-                }
-    
-                // Store the new image
-                $path = $request->file('img')->store('img');
-    
-                // Update user's profile image path
-                $user->img = $path;
-              
+        // Handle image upload and replacement
+        if ($request->hasFile('img')) {
+            // Delete the old image if it exists and is not the default image
+            if ($user->img && $user->img !== 'default-profile.png') {
+                Storage::delete($user->img);
             }
 
-
-
-            if ($request->filled('name')) {
-                $user->name = $request->input('name');
-            }
-            if ($request->filled('email')) {
-                $user->email = $request->input('email');
-            }
-            if ($request->filled('password')) {
-                $user->password = Hash::make($request->input('password'));
-            }
-            
-            if ($request->filled('bio')) {
-                $user->bio = $request->input('bio');
-            }
-
-            $user->save();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Profile updated successfully',
-                'data' => $user,
-            ]);
-
-        } catch (Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Failed to update profile',
-                'error' => $e->getMessage(),
-            ], 500);
+            // Store the new image
+            $path = $request->file('img')->store('img', 'public');
+            $user->img = $path; // Update the user's profile image
         }
+
+        // Update other fields if provided
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+        if ($request->filled('email')) {
+            $user->email = $request->email;
+        }
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        if ($request->filled('bio')) {
+            $user->bio = $request->bio;
+        }
+
+        // Save the updated user details
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Profile updated successfully',
+            'data' => $user,
+        ], 200);
+
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to update profile',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 }

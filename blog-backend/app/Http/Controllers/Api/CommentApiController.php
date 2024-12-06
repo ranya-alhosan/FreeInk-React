@@ -32,6 +32,7 @@ class CommentApiController extends Controller
     public function storeComment(Request $request)
     {
         try {
+            
             $validatedData = $request->validate([
                 'content' => 'required|string',
                 'post_id' => 'required|exists:posts,id',
@@ -129,5 +130,7 @@ class CommentApiController extends Controller
             ], 500);
         }
     }
+
+
 
 }
