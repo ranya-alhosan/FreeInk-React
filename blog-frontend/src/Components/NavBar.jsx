@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-function Header() {
+function NavBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   // Check if the token is present in localStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
+    setIsLoggedIn(!!token); // Update the state based on token presence
   }, []);
 
   // Handle logout functionality
@@ -60,11 +56,19 @@ function Header() {
                   <Link className="nav-link" to="/login">Login</Link>
                 )}
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="#">
-                  <img src="/assets/images/serach-icon.png" alt="Search" />
-                </Link>
-              </li>
+              {/* Conditionally render profile link */}
+              {isLoggedIn && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/profial">
+                    <img
+                      src="public/assets/images/user.png"
+                      alt="Profile"
+                      width={30}
+                      style={{ borderRadius: '50%' }}
+                    />
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </nav>
@@ -73,4 +77,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default NavBar;
