@@ -7,7 +7,7 @@ import About from './Components/About';
 import BlogPost from './Components/BlogPost';
 import Login from './Components/Login';
 import Signup from './Components/Signup';
-import Profial from './Components/Profial';
+import Profile from './Components/Profile';
 import Home from './Components/Home';
 import Contact from './Components/Contact'
 
@@ -33,7 +33,7 @@ const Root = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/profial" element={<Profial />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
 
      
