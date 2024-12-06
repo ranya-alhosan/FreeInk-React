@@ -15,10 +15,10 @@
                   {/* Buttons Section */}
                   <div className="buttons_container">
               <Button variant="primary" className="custom_button">
-                <Link to="/explore" className="button_link">Explore Now</Link>
+                <Link to="/signup" className="button_link">Singup</Link>
               </Button>
               <Button variant="secondary" className="custom_button">
-                <Link to="/get-started" className="button_link">Get Started</Link>
+                <Link to="/contact" className="button_link">Contact US </Link>
               </Button>
             </div>
                 </div>
