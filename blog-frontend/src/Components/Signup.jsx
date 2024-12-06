@@ -32,7 +32,7 @@ const Signup = () => {
       // If the response indicates success (status true), navigate to login page or home
       if (response.data.status) {
         alert(response.data.message); // Alert the success message
-        navigate("/"); // Redirect to login page
+        navigate("/login"); // Redirect to login page
       } else {
         // If signup failed, show error message and stay on signup page
         setError(response.data.message || "Signup failed. Please try again.");
@@ -99,6 +99,19 @@ const Signup = () => {
               Register
             </button>
           </form>
+
+          {/* Back to Login Option */}
+          <div className="back-to-login-container">
+            <p>
+              Already have an account?{" "}
+              <span
+                onClick={() => navigate("/login")}
+                className="back-to-login-link"
+              >
+                Log in here
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </>
