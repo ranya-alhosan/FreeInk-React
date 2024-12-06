@@ -15,22 +15,32 @@ class PostApiController extends Controller
     public function index()
     {
         try {
-            $posts = Post::with(['user', 'category'])->get();
-
+            $posts = Post::with(['user', 'category', 'comment'])
+                ->withCount([
+                    'comment', 
+                    'like as likes_count' => function ($query) {
+                        $query->where('status', 'like');
+                    },
+                    'like as dislikes_count' => function ($query) {
+                        $query->where('status', 'dislike');
+                    }
+                ])
+                ->get();
+    
             return response()->json([
                 'success' => true,
                 'data' => $posts,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching posts: ' . $e->getMessage());
-
+    
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve posts. Please try again later.',
             ], 500);
         }
     }
-
+    
     // Create a new post
     public function storePost(Request $request)
     {
