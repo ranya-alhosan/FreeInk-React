@@ -10,25 +10,52 @@ use Illuminate\Support\Facades\Log;
 
 class CommentApiController extends Controller
 {
-    public function index()
+    public function index($id)
     {
         try {
-            $comments = Comment::with(['user', 'post'])->get();
-
+            // Ensure $id is a valid numeric value
+            if (!is_numeric($id)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid post ID.',
+                ], 400); // Bad Request
+            }
+    
+            // Fetch comments for the specified post ID
+            $comments = Comment::where('post_id', $id)->with(['user', 'post'])->get();
+    
+            // Check if comments exist
+            if ($comments->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No comments found for this post.',
+                    'data' => [],
+                ], 200);
+            }
+    
             return response()->json([
                 'success' => true,
-                'data' => $comments
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error fetching comments: ' . $e->getMessage());
-
+                'data' => $comments,
+            ], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Log database-specific errors
+            Log::error('Database error fetching comments: ' . $e->getMessage());
+    
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch comments. Please try again later.',
+                'message' => 'A database error occurred while fetching comments. Please try again later.',
+            ], 500);
+        } catch (\Exception $e) {
+            // Log general errors
+            Log::error('Error fetching comments: ' . $e->getMessage());
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred while fetching comments. Please try again later.',
             ], 500);
         }
     }
-
+    
     public function storeComment(Request $request)
     {
         try {
