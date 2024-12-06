@@ -107,3 +107,13 @@
   .signup-link:hover {
     color: #0056b3;
   }
+  .back-to-login-link {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .back-to-login-link:hover {
+    color: #0056b3;
+  }
+  
