@@ -38,6 +38,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/updatecomment/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'updateComment']);
     Route::delete('/deletecomment/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'deleteComment']);
 
+    Route::get('/categories', [App\Http\Controllers\Api\CategoryApiController::class, 'index']);
+
 
     
 
