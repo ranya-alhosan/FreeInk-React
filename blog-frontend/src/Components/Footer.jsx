@@ -9,9 +9,7 @@ function Footer() {
         <div className="container">
           {/* Footer logo */}
           <div className="footer_logo">
-            <Link to="/">
-              <img src="/assets/images/footer-logo.png" alt="Footer Logo" />
-            </Link>
+            <p>FreeInk</p>
           </div>
           {/* Footer menu */}
           <div className="footer_menu">

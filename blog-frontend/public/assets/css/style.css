@@ -979,15 +979,16 @@ textarea#comment::placeholder {
 .footer_section {
     width: 100%;
     float: left;
-    background-color: #171717;
+    background-color: #04053a;
     height: auto;
     padding-bottom: 50px;
 }
 
-.footer_logo {
+.footer_logo p {
     width: 100%;
     float: left;
     text-align: center;
+    font-size: 5rem;
 }
 
 .footer_menu {
