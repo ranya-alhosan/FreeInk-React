@@ -10,6 +10,7 @@ import Signup from './Components/Signup';
 import Profial from './Components/Profial';
 import Home from './Components/Home';
 import Contact from './Components/Contact'
+import PostForm from './Components/PostForm'
 
 
 const Root = () => {
@@ -34,6 +35,7 @@ const Root = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profial" element={<Profial />} />
+        <Route path="post" element={<PostForm />} />
       </Routes>
 
      
