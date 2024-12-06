@@ -1079,3 +1079,9 @@ textarea#comment::placeholder {
 .margin_top_90 {
     margin-top: 90px;
 }
+.profile-image {
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    object-fit: cover;
+  }
+  

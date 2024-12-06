@@ -20,25 +20,38 @@ const Login = () => {
     try {
       // Sending login request to the backend
       const response = await axios.post("/login", formData);
-
-      // Log the response to check if it's successful
+  
+      // Log the response to debug
       console.log("Login response:", response.data);
-
-      // If the response indicates success (status true), store the token and navigate to profile page
-      if (response.data.status) {
-        alert(response.data.message); // Alert the success message
+  
+      if (response.status === 200 && response.data.status) {
+        // Successful login
+        alert(response.data.message); // Alert success message
         localStorage.setItem("token", response.data.token); // Save the token to localStorage
-        navigate("/"); // Redirect to profile page
+        navigate("/"); // Redirect to home or profile page
       } else {
-        // If the login failed (status false), show error message and stay on login page
+        // If status is not true in the response body
         setError(response.data.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      // Catch any unexpected errors and display them
+      // Handle error based on HTTP status code
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError(err.response.data.message || "Invalid email or password.");
+        } else if (err.response.status === 500) {
+          setError(err.response.data.message || "Server error. Please try again later.");
+        } else {
+          setError("An unexpected error occurred. Please try again.");
+        }
+      } else {
+        // Handle network or other unexpected errors
+        setError("Unable to connect. Please check your internet connection.");
+      }
+  
       console.error("Login error:", err);
-      setError("An unexpected error occurred. Please try again.");
     }
   };
+    
 
   return (
     <div className="login-container">
