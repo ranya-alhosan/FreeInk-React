@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-// import Slider from 'react-slick';
+import Slider from 'react-slick';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'slick-carousel/slick/slick.css';
-// import 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
+ import 'slick-carousel/slick/slick-theme.css';
 import Head from './Head';
 import NavBar from './NavBar';
 import Footer from './Footer';
@@ -101,7 +101,7 @@ function About() {
     <>
       <Head />
       <NavBar />
-  <SubHero title="About FreeInk" subtitle="A platform for expressing opinions freely and sharing thoughts with the world."/>
+      <SubHero title="About FreeInk" subtitle="A platform for expressing opinions freely and sharing thoughts with the world."/>
       <div className="container about-section py-5">
         {/* Vision and Mission Sections */}
         <div className="row">
