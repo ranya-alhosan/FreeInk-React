@@ -6,7 +6,7 @@ import "/public/assets/css/profile.css";
 import Head from "./Head";
 import NavBar from "./NavBar";
 
-const Profile = () => {
+const EditProfile = () => {
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [editingPost, setEditingPost] = useState(null);
@@ -173,4 +173,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default EditProfile;
