@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../Api/axios";
 import Head from "./Head";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
@@ -16,19 +16,8 @@ function BlogPost() {
 
     useEffect(() => {
         const fetchPosts = async () => {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                setError("You must be logged in to view posts.");
-                return;
-            }
-
             try {
-                const response = await axios.get("http://localhost:8000/api/posts", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const response = await axios.get("/posts");
 
                 if (response.data && response.data.success && response.data.data) {
                     const postsData = response.data.data;
@@ -39,14 +28,14 @@ function BlogPost() {
                     const likeCountData = {};
 
                     postsData.forEach(post => {
-                        likesData[post.id] = post.like_status; // Assuming API returns like status
-                        favoriteData[post.id] = post.favorite_status; // Assuming API returns favorite status
-                        likeCountData[post.id] = post.likes_count; // Assuming API returns total like count
+                        likesData[post.id] = post.like_status;
+                        favoriteData[post.id] = post.favorite_status;
+                        likeCountData[post.id] = post.likes_count;
                     });
 
                     setLikes(likesData);
                     setFavorites(favoriteData);
-                    setLikeCounts(likeCountData); // Store the total likes count for each post
+                    setLikeCounts(likeCountData);
                     setPosts(postsData);
                 } else {
                     setError("No posts found.");
@@ -61,18 +50,7 @@ function BlogPost() {
 
     const fetchComments = async (postId) => {
         try {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                console.error("Token not found.");
-                return;
-            }
-
-            const response = await axios.get(`http://localhost:8000/api/comments/${postId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await axios.get(`/comments/${postId}`);
 
             if (response.data.success) {
                 setComments((prev) => ({ ...prev, [postId]: response.data.data }));
@@ -83,23 +61,9 @@ function BlogPost() {
     };
 
     const handleFavorite = async (postId) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("You must be logged in to favorite posts.");
-            return;
-        }
-
         try {
             const currentStatus = favorites[postId] === "1" ? "0" : "1";
-            const response = await axios.post(
-                "http://localhost:8000/api/favorites",
-                { post_id: postId, status: currentStatus },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const response = await axios.post("/favorites", { post_id: postId, status: currentStatus });
 
             if (response.data.success) {
                 setFavorites((prev) => ({
@@ -113,22 +77,8 @@ function BlogPost() {
     };
 
     const handleAddComment = async (postId) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("You must be logged in to comment.");
-            return;
-        }
-
         try {
-            const response = await axios.post(
-                "http://localhost:8000/api/storecomment",
-                { content: newComment[postId], post_id: postId },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const response = await axios.post("/storecomment", { content: newComment[postId], post_id: postId });
 
             if (response.data.success) {
                 setNewComment((prev) => ({ ...prev, [postId]: "" }));
@@ -140,31 +90,16 @@ function BlogPost() {
     };
 
     const handleLike = async (postId) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("You must be logged in to like posts.");
-            return;
-        }
-    
         try {
             const currentStatus = likes[postId] === "like" ? "none" : "like";
-            const response = await axios.post(
-                "http://localhost:8000/api/likes",
-                { post_id: postId, status: currentStatus },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-    
+            const response = await axios.post("/likes", { post_id: postId, status: currentStatus });
+
             if (response.data.success) {
                 setLikes((prev) => ({
                     ...prev,
                     [postId]: currentStatus,
                 }));
-    
-                // تحديث عدد الإعجابات بناءً على الرد من الـ API
+
                 setLikeCounts((prev) => ({
                     ...prev,
                     [postId]: prev[postId] + (currentStatus === "like" ? 1 : currentStatus === "none" ? -1 : 0),
@@ -174,24 +109,11 @@ function BlogPost() {
             console.error("Error updating like status:", err);
         }
     };
-    const handleDisLike = async (postId) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("You must be logged in to dislike posts.");
-            return;
-        }
 
+    const handleDisLike = async (postId) => {
         try {
             const currentStatus = likes[postId] === "dislike" ? "none" : "dislike";
-            const response = await axios.post(
-                "http://localhost:8000/api/likes",
-                { post_id: postId, status: "dislike" },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const response = await axios.post("/likes", { post_id: postId, status: "dislike" });
 
             if (response.data.success) {
                 setLikes((prev) => ({
@@ -199,10 +121,9 @@ function BlogPost() {
                     [postId]: currentStatus,
                 }));
 
-                // Update the like count
                 setLikeCounts((prev) => ({
                     ...prev,
-                    [postId]: response.data.data.likes_count, // Assuming the API response returns the updated like count
+                    [postId]: response.data.data.likes_count,
                 }));
             }
         } catch (err) {
@@ -223,7 +144,7 @@ function BlogPost() {
                     <div>
                         {posts.map((post) => (
                             <div key={post.id} className="post-item">
-                                <p>Posted by: {post.user.name}</p>
+                                <p>Posted by: {post.user ? post.user.name : "Unknown"}</p>
                                 <h3>{post.title}</h3>
                                 <img
                                     src={post.img}
@@ -231,7 +152,7 @@ function BlogPost() {
                                     className="img-fluid"
                                 />
                                 <p>{post.content}</p>
-                                <p>Category: {post.category.name}</p>
+                                <p>Category: {post.category ? post.category.name : "Uncategorized"}</p>
 
                                 {/* Like Button */}
                                 <button
@@ -268,7 +189,7 @@ function BlogPost() {
                                             <div key={comment.id} className="comment">
                                                 <p>{comment.content}</p>
                                                 <p>
-                                                    <small>By: {comment.user.name}</small>
+                                                    <small>By: {comment.user ? comment.user.name : "Anonymous"}</small>
                                                 </p>
                                             </div>
                                         ))}
