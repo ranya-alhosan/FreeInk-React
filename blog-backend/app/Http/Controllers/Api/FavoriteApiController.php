@@ -25,7 +25,8 @@ class FavoriteApiController extends Controller
         // Check if a favorite record exists for this user and post
         $favorite = Favorite::where('user_id', $validatedData['user_id'])->with('post','user')
             ->where('post_id', $validatedData['post_id'])
-            ->first();
+            ->orderby('created_at', 'desc')
+            ->get();
 
         if ($favorite) {
             // Update the existing favorite record
