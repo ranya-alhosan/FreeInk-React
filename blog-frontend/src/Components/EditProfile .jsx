@@ -150,4 +150,4 @@ const ProfilePage = () => {
     </div>
   );
 };
-
+export default Edit
