@@ -24,10 +24,29 @@ const EditProfile = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+
+    // Create FormData to handle file uploads (image)
+    const formData = new FormData();
+    formData.append("name", userData.name);
+    formData.append("email", userData.email);
+    formData.append("bio", userData.bio);
+
+    // If there is a file selected, append it to the FormData
+    if (userData.img) {
+      formData.append("img", userData.img);
+    }
+
     try {
-      const response = await axios.put('/update', userData);
+      // Submit the form data with PUT request
+      const response = await axios.put('/update', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // If the update is successful, alert and navigate
       alert("Profile updated successfully!");
-      navigate('/profile');
+      navigate('/profile'); // Navigate to profile after update
     } catch (error) {
       alert("Failed to update profile.");
       console.error(error);
@@ -35,11 +54,19 @@ const EditProfile = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value
-    });
+    const { name, value, type, files } = e.target;
+    if (type === "file") {
+      // Handle file input
+      setUserData({
+        ...userData,
+        [name]: files[0], // Set the first file selected
+      });
+    } else {
+      setUserData({
+        ...userData,
+        [name]: value,
+      });
+    }
   };
 
   if (loading) {
@@ -73,3 +100,4 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
+ 
