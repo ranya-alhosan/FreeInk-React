@@ -5,7 +5,7 @@ import NavBar from "./NavBar";
 import Footer from "./Footer";
 import "/public/assets/css/Post.css";
 
-import LikeButton from "./LikeButton";
+
 
 function BlogPost() {
     const [posts, setPosts] = useState([]);
@@ -13,6 +13,7 @@ function BlogPost() {
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState({});
     const [likes, setLikes] = useState({}); // Holds like statuses for each post
+    const [favorites, setFavorites] = useState({}); // Holds favorite statuses for each post
 
     // Fetch posts on component mount
     useEffect(() => {
@@ -32,7 +33,16 @@ function BlogPost() {
                 });
 
                 if (response.data && response.data.success && response.data.data) {
-                    setPosts(response.data.data);
+                    const postsData = response.data.data;
+
+                    // Set default favorite status to 0
+                    const favoriteData = postsData.reduce((acc, post) => {
+                        acc[post.id] = 0; // Set default value to 0
+                        return acc;
+                    }, {});
+
+                    setFavorites(favoriteData);
+                    setPosts(postsData);
                 } else {
                     setError("No posts found.");
                 }
@@ -44,9 +54,8 @@ function BlogPost() {
 
         fetchPosts();
     }, []);
-
-    // Fetch comments for a specific post
-    const fetchComments = async (postId) => {
+     // Fetch comments for a specific post
+     const fetchComments = async (postId) => {
         try {
             const token = localStorage.getItem("token"); // احصل على التوكن من localStorage
             if (!token) {
@@ -69,12 +78,38 @@ function BlogPost() {
             console.error("Error fetching comments:", err);
             setError("Failed to load comments. Please try again later.");
         }
-        
     };
-    
-    
-    
 
+    // Handle favorite/unfavorite a post
+    const handleFavorite = async (postId) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("You must be logged in to favorite posts.");
+            return;
+        }
+
+        try {
+            const currentStatus = favorites[postId] === "1" ? "0" : "1"; // Toggle status
+            const response = await axios.post(
+                "http://localhost:8000/api/favorites",
+                { post_id: postId, status: currentStatus },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.data.success) {
+                setFavorites((prev) => ({
+                    ...prev,
+                    [postId]: currentStatus,
+                }));
+            }
+        } catch (err) {
+            console.error("Error updating favorite status:", err);
+        }
+    };
     // Handle adding a new comment
     const handleAddComment = async (postId) => {
         const token = localStorage.getItem("token");
@@ -133,6 +168,7 @@ function BlogPost() {
             console.error("Error updating like status:", err);
         }
     };
+
     const handleDisLike = async (postId) => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -187,44 +223,45 @@ function BlogPost() {
                                 <p>Category: {post.category.name}</p>
 
                                 {/* Like Button */}
-                                <button 
+                                <button
                                     className={`like-button ${likes[post.id] === "like" ? "liked" : ""}`}
                                     onClick={() => handleLike(post.id)}
                                 >
                                     {likes[post.id] === "like" ? "Unlike" : "Like"}
                                 </button>
 
-                                 {/* dislikebutton  */}
-                                 
-                                 <button 
+                                {/* Dislike button */}
+                                <button
                                     className={`dislike-button ${likes[post.id] === "dislike" ? "disliked" : ""}`}
                                     onClick={() => handleDisLike(post.id)}
                                 >
-                                    {likes[post.id] === "dislike" ? "Undislike" : "dislike"}
+                                    {likes[post.id] === "dislike" ? "Undislike" : "Dislike"}
                                 </button>
-                                 
 
-
-
-                                
+                                {/* Favorite Button */}
+                                <button 
+                                    className={`favorite-button ${favorites[post.id] === "1" ? "favorited" : ""}`}
+                                    onClick={() => handleFavorite(post.id)}
+                                >
+                                    {favorites[post.id] === "1" ? "Unfavorite" : "Favorite"}
+                                </button>
 
                                 {/* Comments Section */}
                                 <button onClick={() => fetchComments(post.id)}>Load Comments</button>
-                                    {comments[post.id] && comments[post.id].length > 0 ? (
-                                        <div>
-                                            {comments[post.id].map((comment) => (
-                                                <div key={comment.id} className="comment">
-                                                    <p>{comment.content}</p>
-                                                    <p>
-                                                        <small>By: {comment.user.name}</small>
-                                                    </p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p>No comments yet.</p>
-                                    )}
-                                
+                                {comments[post.id] && comments[post.id].length > 0 ? (
+                                    <div>
+                                        {comments[post.id].map((comment) => (
+                                            <div key={comment.id} className="comment">
+                                                <p>{comment.content}</p>
+                                                <p>
+                                                    <small>By: {comment.user.name}</small>
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p>No comments yet.</p>
+                                )}
 
                                 {/* Add Comment Section */}
                                 <div className="add-comment">
@@ -238,9 +275,7 @@ function BlogPost() {
                                             }))
                                         }
                                     ></textarea>
-                                    <button onClick={() => handleAddComment(post.id)}>
-                                        Submit Comment
-                                    </button>
+                                    <button onClick={() => handleAddComment(post.id)}>Submit Comment</button>
                                 </div>
                             </div>
                         ))}
