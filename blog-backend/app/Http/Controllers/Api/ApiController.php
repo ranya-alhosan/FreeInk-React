@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Exception;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
@@ -23,16 +24,14 @@ class ApiController extends Controller
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|confirmed|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             ]);
-    
-            // Assign a default image path
-            $defaultImage = 'default-profile.png'; // Ensure this file exists in the 'public' directory
-    
-            // Create the user with the default image
+  
+            $defaultImage = asset('storage/users/default-profile.png'); // Make sure the file exists in the storage
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'img' => $defaultImage, // Set default profile image
+                'img' => $defaultImage, // Store the default image URL
             ]);
     
             return response()->json([
@@ -127,62 +126,64 @@ class ApiController extends Controller
 
     // Update Profile function (PUT)
     public function updateProfile(Request $request)
-{
-    try {
-        // Validate the inputs
-        $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|unique:users,email,' . auth()->id(),
-            'password' => 'nullable|confirmed|min:8',
-            'bio' => 'nullable|string',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        // Get the authenticated user
-        $user = auth()->user();
-
-        // Handle image upload and replacement
-        if ($request->hasFile('img')) {
-            // Delete the old image if it exists and is not the default image
-            if ($user->img && $user->img !== 'default-profile.png') {
-                Storage::delete($user->img);
+    {
+        try {
+            // Validate the inputs
+            $request->validate([
+                'name' => 'nullable|string|max:255',
+                'email' => 'nullable|email|unique:users,email,' . auth()->id(),
+                'password' => 'nullable|confirmed|min:8',
+                'bio' => 'nullable|string',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+    
+            // Get the authenticated user
+            $user = auth()->user();
+    
+            // Handle image upload and replacement
+            if ($request->hasFile('img')) {
+                // Delete the old image if it exists
+                if ($user->img && strpos($user->img, 'default-profile.png') === false) {
+                    // Remove only if it's not the default image
+                    $oldImagePath = str_replace(asset('storage/'), '', $user->img);
+                    Storage::disk('public')->delete($oldImagePath);
+                }
+    
+                // Store the new image
+                $imagePath = $request->file('img')->store('users', 'public');
+                $user->img = asset('storage/users/' . $imagePath);
             }
-
-            // Store the new image
-            $path = $request->file('img')->store('img', 'public');
-            $user->img = $path; // Update the user's profile image
+    
+            // Update other fields if provided
+            if ($request->filled('name')) {
+                $user->name = $request->name;
+            }
+            if ($request->filled('email')) {
+                $user->email = $request->email;
+            }
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+            if ($request->filled('bio')) {
+                $user->bio = $request->bio;
+            }
+    
+            // Save the updated user details
+            $user->save();
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile updated successfully',
+                'data' => $user,
+            ], 200);
+    
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to update profile',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // Update other fields if provided
-        if ($request->filled('name')) {
-            $user->name = $request->name;
-        }
-        if ($request->filled('email')) {
-            $user->email = $request->email;
-        }
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-        if ($request->filled('bio')) {
-            $user->bio = $request->bio;
-        }
-
-        // Save the updated user details
-        $user->save();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Profile updated successfully',
-            'data' => $user,
-        ], 200);
-
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Failed to update profile',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
-
+    
 }

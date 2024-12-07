@@ -22,7 +22,7 @@ class CommentApiController extends Controller
             }
     
             // Fetch comments for the specified post ID
-            $comments = Comment::where('post_id', $id)->with(['user', 'post'])->get();
+            $comments = Comment::where('post_id', $id)->with(['user', 'post'])->orderBy('created_at', 'desc')->get();
     
             // Check if comments exist
             if ($comments->isEmpty()) {

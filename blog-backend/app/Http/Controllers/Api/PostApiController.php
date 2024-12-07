@@ -16,16 +16,18 @@ class PostApiController extends Controller
     {
         try {
             $posts = Post::with(['user', 'category', 'comment'])
-                ->withCount([
-                    'comment', 
-                    'like as likes_count' => function ($query) {
-                        $query->where('status', 'like');
-                    },
-                    'like as dislikes_count' => function ($query) {
-                        $query->where('status', 'dislike');
-                    }
-                ])
-                ->get();
+            ->withCount([
+                'comment',
+                'like as likes_count' => function ($query) {
+                    $query->where('status', 'like');
+                },
+                'like as dislikes_count' => function ($query) {
+                    $query->where('status', 'dislike');
+                },
+            ])
+            ->orderBy('created_at', 'desc') // Order by the latest posts
+            ->get();
+        
     
             return response()->json([
                 'success' => true,
