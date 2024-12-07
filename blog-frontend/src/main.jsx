@@ -11,6 +11,7 @@ import Signup from './Components/Signup';
 import Profile from './Components/Profile';
 import Home from './Components/Home';
 import Contact from './Components/Contact'
+import EditProfile from "./Components/EditProfile ";
 
 
 const Root = () => {
@@ -36,6 +37,8 @@ const Root = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+
       </Routes>
 
      

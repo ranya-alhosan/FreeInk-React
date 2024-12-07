@@ -1,0 +1,131 @@
+/* General container styling */
+
+  /* Profile header */
+  .profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #007bff;
+    margin-bottom: 15px;
+  }
+  
+  .profile-header h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .profile-header p {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 20px;
+  }
+  
+  .profile-header button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 14px;
+  }
+  
+  .profile-header button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Posts section */
+  .profile-posts h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .profile-posts ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .profile-posts li {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .profile-posts li:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-posts h4 {
+    font-size: 18px;
+    margin: 0 0 10px;
+    color: #007bff;
+  }
+  
+  .profile-posts p {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .profile-posts button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 12px;
+  }
+  
+  .profile-posts button:hover {
+    background-color: #218838;
+  }
+  
+  .profile-posts button:last-child {
+    background-color: #dc3545;
+  }
+  
+  .profile-posts button:last-child:hover {
+    background-color: #c82333;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .profile-container {
+      padding: 15px;
+    }
+  
+    .profile-image {
+      width: 100px;
+      height: 100px;
+    }
+  
+    .profile-header h2 {
+      font-size: 20px;
+    }
+  
+    .profile-header p {
+      font-size: 14px;
+    }
+  
+    .profile-posts h3 {
+      font-size: 18px;
+    }
+  
+    .profile-posts h4 {
+      font-size: 16px;
+    }
+  }
+  
