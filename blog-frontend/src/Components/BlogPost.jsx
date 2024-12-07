@@ -5,17 +5,15 @@ import NavBar from "./NavBar";
 import Footer from "./Footer";
 import "/public/assets/css/Post.css";
 
-
-
 function BlogPost() {
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState("");
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState({});
-    const [likes, setLikes] = useState({}); // Holds like statuses for each post
-    const [favorites, setFavorites] = useState({}); // Holds favorite statuses for each post
+    const [likes, setLikes] = useState({});
+    const [favorites, setFavorites] = useState({});
+    const [likeCounts, setLikeCounts] = useState({});
 
-    // Fetch posts on component mount
     useEffect(() => {
         const fetchPosts = async () => {
             const token = localStorage.getItem("token");
@@ -35,52 +33,55 @@ function BlogPost() {
                 if (response.data && response.data.success && response.data.data) {
                     const postsData = response.data.data;
 
-                    // Set default favorite status to 0
-                    const favoriteData = postsData.reduce((acc, post) => {
-                        acc[post.id] = 0; // Set default value to 0
-                        return acc;
-                    }, {});
+                    // Fetch like and favorite statuses for each post
+                    const likesData = {};
+                    const favoriteData = {};
+                    const likeCountData = {};
 
+                    postsData.forEach(post => {
+                        likesData[post.id] = post.like_status; // Assuming API returns like status
+                        favoriteData[post.id] = post.favorite_status; // Assuming API returns favorite status
+                        likeCountData[post.id] = post.likes_count; // Assuming API returns total like count
+                    });
+
+                    setLikes(likesData);
                     setFavorites(favoriteData);
+                    setLikeCounts(likeCountData); // Store the total likes count for each post
                     setPosts(postsData);
                 } else {
                     setError("No posts found.");
                 }
             } catch (err) {
-                console.error("Error fetching posts:", err);
                 setError("Failed to load posts. Please try again.");
             }
         };
 
         fetchPosts();
     }, []);
-     // Fetch comments for a specific post
-     const fetchComments = async (postId) => {
+
+    const fetchComments = async (postId) => {
         try {
-            const token = localStorage.getItem("token"); // احصل على التوكن من localStorage
+            const token = localStorage.getItem("token");
+
             if (!token) {
                 console.error("Token not found.");
                 return;
             }
-    
+
             const response = await axios.get(`http://localhost:8000/api/comments/${postId}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`, // أضف التوكن إلى رأسات الطلب
+                    Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             if (response.data.success) {
                 setComments((prev) => ({ ...prev, [postId]: response.data.data }));
-            } else {
-                console.error("Error fetching comments:", response.data.message);
             }
         } catch (err) {
-            console.error("Error fetching comments:", err);
             setError("Failed to load comments. Please try again later.");
         }
     };
 
-    // Handle favorite/unfavorite a post
     const handleFavorite = async (postId) => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -89,7 +90,7 @@ function BlogPost() {
         }
 
         try {
-            const currentStatus = favorites[postId] === "1" ? "0" : "1"; // Toggle status
+            const currentStatus = favorites[postId] === "1" ? "0" : "1";
             const response = await axios.post(
                 "http://localhost:8000/api/favorites",
                 { post_id: postId, status: currentStatus },
@@ -110,7 +111,7 @@ function BlogPost() {
             console.error("Error updating favorite status:", err);
         }
     };
-    // Handle adding a new comment
+
     const handleAddComment = async (postId) => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -131,14 +132,13 @@ function BlogPost() {
 
             if (response.data.success) {
                 setNewComment((prev) => ({ ...prev, [postId]: "" }));
-                fetchComments(postId); // Refresh comments
+                fetchComments(postId);
             }
         } catch (err) {
             console.error("Error adding comment:", err);
         }
     };
 
-    // Handle like/unlike a post
     const handleLike = async (postId) => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -147,7 +147,7 @@ function BlogPost() {
         }
 
         try {
-            const currentStatus = likes[postId] === "like" ? "none" : "like"; // Toggle status
+            const currentStatus = likes[postId] === "like" ? "none" : "like";
             const response = await axios.post(
                 "http://localhost:8000/api/likes",
                 { post_id: postId, status: "like" },
@@ -163,6 +163,12 @@ function BlogPost() {
                     ...prev,
                     [postId]: currentStatus,
                 }));
+
+                // Update the like count
+                setLikeCounts((prev) => ({
+                    ...prev,
+                    [postId]: response.data.data.likes_count, // Assuming the API response returns the updated like count
+                }));
             }
         } catch (err) {
             console.error("Error updating like status:", err);
@@ -177,7 +183,7 @@ function BlogPost() {
         }
 
         try {
-            const currentStatus = likes[postId] === "dislike" ? "none" : "dislike"; // Toggle status
+            const currentStatus = likes[postId] === "dislike" ? "none" : "dislike";
             const response = await axios.post(
                 "http://localhost:8000/api/likes",
                 { post_id: postId, status: "dislike" },
@@ -193,9 +199,15 @@ function BlogPost() {
                     ...prev,
                     [postId]: currentStatus,
                 }));
+
+                // Update the like count
+                setLikeCounts((prev) => ({
+                    ...prev,
+                    [postId]: response.data.data.likes_count, // Assuming the API response returns the updated like count
+                }));
             }
         } catch (err) {
-            console.error("Error updating like status:", err);
+            console.error("Error updating dislike status:", err);
         }
     };
 
@@ -212,14 +224,14 @@ function BlogPost() {
                     <div>
                         {posts.map((post) => (
                             <div key={post.id} className="post-item">
+                                <p>Posted by: {post.user.name}</p>
                                 <h3>{post.title}</h3>
-                                <p>{post.content}</p>
                                 <img
-                                    src={`http://localhost:8000/storage/${post.img}`}
+                                    src={post.img}
                                     alt={post.title}
                                     className="img-fluid"
                                 />
-                                <p>Posted by: {post.user.name}</p>
+                                <p>{post.content}</p>
                                 <p>Category: {post.category.name}</p>
 
                                 {/* Like Button */}
@@ -227,7 +239,7 @@ function BlogPost() {
                                     className={`like-button ${likes[post.id] === "like" ? "liked" : ""}`}
                                     onClick={() => handleLike(post.id)}
                                 >
-                                    {likes[post.id] === "like" ? "Unlike" : "Like"}
+                                    Like
                                 </button>
 
                                 {/* Dislike button */}
@@ -235,7 +247,7 @@ function BlogPost() {
                                     className={`dislike-button ${likes[post.id] === "dislike" ? "disliked" : ""}`}
                                     onClick={() => handleDisLike(post.id)}
                                 >
-                                    {likes[post.id] === "dislike" ? "Undislike" : "Dislike"}
+                                    Dislike
                                 </button>
 
                                 {/* Favorite Button */}
@@ -243,8 +255,11 @@ function BlogPost() {
                                     className={`favorite-button ${favorites[post.id] === "1" ? "favorited" : ""}`}
                                     onClick={() => handleFavorite(post.id)}
                                 >
-                                    {favorites[post.id] === "1" ? "Unfavorite" : "Favorite"}
+                                    Favorite
                                 </button>
+
+                                {/* Like Count */}
+                                <p>Likes: {likeCounts[post.id] || 0}</p>
 
                                 {/* Comments Section */}
                                 <button onClick={() => fetchComments(post.id)}>Load Comments</button>

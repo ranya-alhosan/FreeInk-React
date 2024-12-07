@@ -8,12 +8,12 @@ function NewPost() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [img, setImg] = useState(null);
-    const [categoryId, setCategoryId] = useState("");
-    const [showDropdown, setShowDropdown] = useState(false); // للتحكم في عرض القائمة
+    const [categoryId, setCategoryId] = useState(""); // Store selected category ID
+    const [showDropdown, setShowDropdown] = useState(false); // Toggle dropdown visibility
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    // التصنيفات
+    // List of categories
     const categories = [
         { id: 1, name: "Health & Sport" },
         { id: 2, name: "Romance & Relationships" },
@@ -25,8 +25,25 @@ function NewPost() {
         { id: 8, name: "History & Culture" },
     ];
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(""); // Clear previous error
+        setSuccess(""); // Clear previous success message
+
+        // Validation checks
+        if (!title.trim()) {
+            setError("Title is required.");
+            return;
+        }
+        if (!content.trim()) {
+            setError("Content is required.");
+            return;
+        }
+        if (!categoryId) {
+            setError("Please select a category.");
+            return;
+        }
 
         const token = localStorage.getItem("token");
         if (!token) {
@@ -59,9 +76,12 @@ function NewPost() {
             setContent("");
             setImg(null);
             setCategoryId("");
+            setShowDropdown(false);
         } catch (error) {
             console.error("Error adding post:", error);
-            setError(error.response?.data?.message || "An error occurred.");
+            setError(
+                error.response?.data?.message || "An error occurred. Please try again."
+            );
         }
     };
 
@@ -112,7 +132,8 @@ function NewPost() {
                                     onClick={() => setShowDropdown(!showDropdown)}
                                 >
                                     {categoryId
-                                        ? categories.find((c) => c.id === parseInt(categoryId))?.name
+                                        ? categories.find((c) => c.id === parseInt(categoryId))
+                                              ?.name
                                         : "Select a category"}
                                 </button>
                                 {showDropdown && (
@@ -123,7 +144,7 @@ function NewPost() {
                                                 className="dropdown-item cursor-pointer"
                                                 onClick={() => {
                                                     setCategoryId(category.id);
-                                                    setShowDropdown(false); // لإخفاء القائمة
+                                                    setShowDropdown(false); // Close dropdown
                                                 }}
                                             >
                                                 {category.name}
