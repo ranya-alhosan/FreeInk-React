@@ -1,146 +1,179 @@
-import React, { useState, useEffect } from 'react';
-import axios from '../api/axios'; // Make sure the axios instance is imported correctly
+import React, { useState, useEffect } from "react";
+import axios from "../Api/axios";
+import "/public/assets/css/profile.css";
 
-function Profile() {
-  const [profile, setProfile] = useState({
-    name: '',
-    email: '',
-    bio: '',
-    img: '',
-  });
-  const [previewImage, setPreviewImage] = useState('');
+const Profile = () => {
+  const [user, setUser] = useState({});
+  const [favorites, setFavorites] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [editingPost, setEditingPost] = useState(null);
+  const [editingProfile, setEditingProfile] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch the user's profile on component mount
-    axios
-      .get('/profile')
-      .then((response) => {
-        setProfile(response.data.data);
-        setPreviewImage(`http://127.0.0.1:8000/storage/${response.data.data.img}`);
+    const fetchData = async () => {
+      try {
+        // Fetch profile details
+        const profileResponse = await axios.get("/profile");
+        setUser(profileResponse.data.data);
+
+        // Fetch user's posts
+        const postsResponse = await axios.get("/posts");
+        setPosts(
+          postsResponse.data.data.filter(
+            (post) => post.user_id === profileResponse.data.data.id
+          )
+        );
+
+        // Fetch favorites
+        const favoritesResponse = await axios.get("/favorites");
+        setFavorites(favoritesResponse.data.data);
+
         setLoading(false);
-      })
-      .catch((err) => {
-        setError('Failed to fetch profile data');
+      } catch (error) {
+        console.error("Error fetching data:", error);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProfile((prevProfile) => ({ ...prevProfile, img: file }));
-      setPreviewImage(URL.createObjectURL(file)); // Preview the selected image
+  const handleEditProfile = async () => {
+    try {
+      const response = await axios.post("/profile", user);
+      setUser(response.data.data);
+      setEditingProfile(false);
+    } catch (error) {
+      console.error("Error updating profile:", error.response || error.message);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  
-    const formData = new FormData();
-    formData.append('name', profile.name);
-    formData.append('email', profile.email);
-    formData.append('bio', profile.bio); // Ensure bio is appended to formData
-    if (profile.img instanceof File) {
-      formData.append('img', profile.img);
-    }
-  
-    axios
-      .put('/update', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((response) => {
-        alert('Profile updated successfully!');
-        setProfile(response.data.data);
-        setPreviewImage(`http://127.0.0.1:8000/storage/${response.data.data.img}`);
-      })
-      .catch((err) => {
-        alert('Error updating profile');
-        console.error(err);
-      });
+  const handleEditPost = (post) => {
+    setEditingPost(post);
   };
-  
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  const handleSavePost = async () => {
+    if (!editingPost) return;
+
+    try {
+      const response = await axios.put(`/posts/${editingPost.id}`, editingPost);
+      const updatedPost = response.data?.data || response.data;
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === editingPost.id ? { ...updatedPost } : post
+        )
+      );
+      setEditingPost(null);
+    } catch (error) {
+      console.error("Error updating post:", error.response || error.message);
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await axios.delete(`/posts/${postId}`);
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="container" style={{ marginTop: '20px' }}>
-      <h1 className="text-center">Profile</h1>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="row">
-          <div className="col-md-6 mx-auto">
-            <div className="text-center">
-              <img
-                src={previewImage || 'https://via.placeholder.com/150'}
-                alt="Profile"
-                style={{
-                  width: '150px',
-                  height: '150px',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
-              />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: 'block', marginTop: '10px' }}
-              />
-            </div>
-            <div className="form-group mt-3">
-              <label>Name</label>
-              <input
-                type="text"
-                className="form-control"
-                name="name"
-                value={profile.name}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="form-group mt-3">
-              <label>Email</label>
-              <input
-                type="email"
-                className="form-control"
-                name="email"
-                value={profile.email}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="form-group mt-3">
-              <label>Bio</label>
-              <textarea
-                className="form-control"
-                name="bio"
-                value={profile.bio}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="form-group mt-3 text-center">
-              <button type="submit" className="btn btn-primary">
-                Save Changes
-              </button>
-            </div>
+    <div className="profile-container">
+      {/* User Profile Section */}
+      <div className="profile-header">
+        <img src={user.img} alt={user.name} className="profile-image" />
+        {editingProfile ? (
+          <div>
+            <input
+              type="text"
+              value={user.name}
+              onChange={(e) => setUser({ ...user, name: e.target.value })}
+            />
+            <input
+              type="email"
+              value={user.email}
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
+            />
+            <textarea
+              value={user.bio}
+              onChange={(e) => setUser({ ...user, bio: e.target.value })}
+            />
+            <button onClick={handleEditProfile}>Save</button>
+            <button onClick={() => setEditingProfile(false)}>Cancel</button>
           </div>
-        </div>
-      </form>
+        ) : (
+          <>
+            <h2>{user.name}</h2>
+            <p>{user.bio}</p>
+            <button onClick={() => setEditingProfile(true)}>Edit Profile</button>
+          </>
+        )}
+      </div>
+
+      {/* Favorite Blogs Section */}
+      <div className="favorites">
+        <h3>Your Favorite Blogs</h3>
+        <ul>
+          {favorites.map((favorite) => (
+            <li key={favorite.id}>
+              <h4>{favorite.post.title}</h4>
+              <p>{favorite.post.content}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* User's Posts Section */}
+      <div className="user-posts">
+        <h3>Your Posts</h3>
+        <ul>
+          {posts.map((post) => (
+            <li key={post.id}>
+              {editingPost && editingPost.id === post.id ? (
+                <div>
+                  <input
+                    type="text"
+                    value={editingPost.title}
+                    onChange={(e) =>
+                      setEditingPost({ ...editingPost, title: e.target.value })
+                    }
+                  />
+                  <textarea
+                    value={editingPost.content}
+                    onChange={(e) =>
+                      setEditingPost({
+                        ...editingPost,
+                        content: e.target.value,
+                      })
+                    }
+                  />
+                  <button onClick={handleSavePost}>Save</button>
+                  <button onClick={() => setEditingPost(null)}>Cancel</button>
+                </div>
+              ) : (
+                <>
+                  <h4>{post.title}</h4>
+                  <p>{post.content}</p>
+                  <button onClick={() => handleEditPost(post)}>Edit</button>
+                  <button onClick={() => handleDeletePost(post.id)}>
+                    Delete
+                  </button>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
-}
+};
 
 export default Profile;
