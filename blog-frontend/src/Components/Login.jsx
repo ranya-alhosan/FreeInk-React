@@ -27,7 +27,6 @@ const Login = () => {
   
       if (response.status === 200 && response.data.status) {
         // Successful login
-        alert(response.data.message); // Alert success message
         localStorage.setItem("token", response.data.token); // Save the token to localStorage
         navigate("/"); // Redirect to home or profile page
       } else {
