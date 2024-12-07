@@ -101,7 +101,7 @@ function About() {
     <>
       <Head />
       <NavBar />
-  <SubHero title="About FreeInk" subtitle="A platform for expressing opinions freely and sharing thoughts with the world."/>
+      <SubHero title="About FreeInk" subtitle="A platform for expressing opinions freely and sharing thoughts with the world."/>
       <div className="container about-section py-5">
         {/* Vision and Mission Sections */}
         <div className="row">
