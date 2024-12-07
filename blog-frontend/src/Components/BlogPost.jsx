@@ -145,36 +145,35 @@ function BlogPost() {
             alert("You must be logged in to like posts.");
             return;
         }
-
+    
         try {
             const currentStatus = likes[postId] === "like" ? "none" : "like";
             const response = await axios.post(
                 "http://localhost:8000/api/likes",
-                { post_id: postId, status: "like" },
+                { post_id: postId, status: currentStatus },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-
+    
             if (response.data.success) {
                 setLikes((prev) => ({
                     ...prev,
                     [postId]: currentStatus,
                 }));
-
-                // Update the like count
+    
+                // تحديث عدد الإعجابات بناءً على الرد من الـ API
                 setLikeCounts((prev) => ({
                     ...prev,
-                    [postId]: response.data.data.likes_count, // Assuming the API response returns the updated like count
+                    [postId]: prev[postId] + (currentStatus === "like" ? 1 : currentStatus === "none" ? -1 : 0),
                 }));
             }
         } catch (err) {
             console.error("Error updating like status:", err);
         }
     };
-
     const handleDisLike = async (postId) => {
         const token = localStorage.getItem("token");
         if (!token) {
