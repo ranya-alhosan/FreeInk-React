@@ -30,7 +30,20 @@ const ProfilePage = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+
+    // Create FormData to handle file uploads (image)
+    const formData = new FormData();
+    formData.append("name", userData.name);
+    formData.append("email", userData.email);
+    formData.append("bio", userData.bio);
+
+    // If there is a file selected, append it to the FormData
+    if (userData.img) {
+      formData.append("img", userData.img);
+    }
+
     try {
+
       const formData = new FormData();
       formData.append('name', userData.name);
       formData.append('email', userData.email);
@@ -51,11 +64,19 @@ const ProfilePage = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value
-    });
+    const { name, value, type, files } = e.target;
+    if (type === "file") {
+      // Handle file input
+      setUserData({
+        ...userData,
+        [name]: files[0], // Set the first file selected
+      });
+    } else {
+      setUserData({
+        ...userData,
+        [name]: value,
+      });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -130,4 +151,3 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
