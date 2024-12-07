@@ -1,52 +1,53 @@
 import React, { useState, useEffect } from "react";
 import axios from "../Api/axios";
+import Footer from "./Footer";
+import { useNavigate } from "react-router-dom";
 import "/public/assets/css/profile.css";
+import Head from "./Head";
+import NavBar from "./NavBar";
 
 const Profile = () => {
   const [user, setUser] = useState({});
-  const [favorites, setFavorites] = useState([]);
   const [posts, setPosts] = useState([]);
   const [editingPost, setEditingPost] = useState(null);
-  const [editingProfile, setEditingProfile] = useState(false);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // Fetch user profile
+  const fetchProfile = async () => {
+    try {
+      const response = await axios.get("/profile");
+      setUser(response.data.data);
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+  // Fetch posts after profile data is fetched
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get("/posts");
+      const userPosts = response.data.data.filter(
+        (post) => post.user_id === user.id
+      );
+      setPosts(userPosts);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch profile details
-        const profileResponse = await axios.get("/profile");
-        setUser(profileResponse.data.data);
-
-        // Fetch user's posts
-        const postsResponse = await axios.get("/posts");
-        setPosts(
-          postsResponse.data.data.filter(
-            (post) => post.user_id === profileResponse.data.data.id
-          )
-        );
-
-        // Fetch favorites
-        const favoritesResponse = await axios.get("/favorites");
-        setFavorites(favoritesResponse.data.data);
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    fetchProfile();
   }, []);
 
-  const handleEditProfile = async () => {
-    try {
-      const response = await axios.post("/profile", user);
-      setUser(response.data.data);
-      setEditingProfile(false);
-    } catch (error) {
-      console.error("Error updating profile:", error.response || error.message);
-    }
+  useEffect(() => {
+    if (user.id) fetchPosts();
+    setLoading(false);
+  }, [user]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   const handleEditPost = (post) => {
@@ -54,14 +55,14 @@ const Profile = () => {
   };
 
   const handleSavePost = async () => {
-    if (!editingPost) return;
-
     try {
-      const response = await axios.put(`/posts/${editingPost.id}`, editingPost);
-      const updatedPost = response.data?.data || response.data;
+      const response = await axios.put(`/posts/updatepost/${editingPost.id}`, {
+        title: editingPost.title,
+        content: editingPost.content,
+      });
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.id === editingPost.id ? { ...updatedPost } : post
+          post.id === editingPost.id ? { ...editingPost } : post
         )
       );
       setEditingPost(null);
@@ -73,11 +74,35 @@ const Profile = () => {
   const handleDeletePost = async (postId) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        await axios.delete(`/posts/${postId}`);
+        const response = await axios.delete(`/posts/deletepost/${postId}`);
         setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
       } catch (error) {
-        console.error("Error deleting post:", error);
+        console.error("Error deleting post:", error.response || error.message);
       }
+    }
+  };
+
+  const handleFavorite = async (postId) => {
+    try {
+      const response = await axios.post("/favorites", {
+        post_id: postId,
+        status: 1, // Mark as favorite
+      });
+      console.log(response.data.message);
+    } catch (error) {
+      console.error("Error adding to favorites:", error.response || error.message);
+    }
+  };
+
+  const handleUnfavorite = async (postId) => {
+    try {
+      const response = await axios.post("/favorites", {
+        post_id: postId,
+        status: 0, // Unmark as favorite
+      });
+      console.log(response.data.message);
+    } catch (error) {
+      console.error("Error removing from favorites:", error.response || error.message);
     }
   };
 
@@ -86,93 +111,65 @@ const Profile = () => {
   }
 
   return (
-    <div className="profile-container">
-      {/* User Profile Section */}
-      <div className="profile-header">
-        <img src={user.img} alt={user.name} className="profile-image" />
-        {editingProfile ? (
-          <div>
-            <input
-              type="text"
-              value={user.name}
-              onChange={(e) => setUser({ ...user, name: e.target.value })}
-            />
-            <input
-              type="email"
-              value={user.email}
-              onChange={(e) => setUser({ ...user, email: e.target.value })}
-            />
-            <textarea
-              value={user.bio}
-              onChange={(e) => setUser({ ...user, bio: e.target.value })}
-            />
-            <button onClick={handleEditProfile}>Save</button>
-            <button onClick={() => setEditingProfile(false)}>Cancel</button>
-          </div>
-        ) : (
-          <>
-            <h2>{user.name}</h2>
-            <p>{user.bio}</p>
-            <button onClick={() => setEditingProfile(true)}>Edit Profile</button>
-          </>
-        )}
+    <>
+      <Head />
+      <NavBar />
+      <div className="profile-container">
+        <div className="profile-header">
+          <img src={user.img} alt={user.name} className="profile-image" />
+          <h2>{user.name}</h2>
+          <p>{user.bio}</p>
+          <button onClick={() => navigate("/edit-profile")}>Edit Profile</button>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+        <div className="profile-posts">
+          <h3>Your Posts</h3>
+          <ul>
+            {posts.map((post) => (
+              <li key={post.id}>
+                {editingPost && editingPost.id === post.id ? (
+                  <div>
+                    <input
+                      type="text"
+                      value={editingPost.title}
+                      onChange={(e) =>
+                        setEditingPost({
+                          ...editingPost,
+                          title: e.target.value,
+                        })
+                      }
+                    />
+                    <textarea
+                      value={editingPost.content}
+                      onChange={(e) =>
+                        setEditingPost({
+                          ...editingPost,
+                          content: e.target.value,
+                        })
+                      }
+                    />
+                    <button onClick={handleSavePost}>Save</button>
+                    <button onClick={() => setEditingPost(null)}>Cancel</button>
+                  </div>
+                ) : (
+                  <>
+                    <h4>{post.title}</h4>
+                    <p>{post.content}</p>
+                    <button onClick={() => handleEditPost(post)}>Edit</button>
+                    <button onClick={() => handleDeletePost(post.id)}>
+                      Delete
+                    </button>
+                    <button onClick={() => handleFavorite(post.id)}>Favorite</button>
+                    <button onClick={() => handleUnfavorite(post.id)}>Unfavorite</button>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-
-      {/* Favorite Blogs Section */}
-      <div className="favorites">
-        <h3>Your Favorite Blogs</h3>
-        <ul>
-          {favorites.map((favorite) => (
-            <li key={favorite.id}>
-              <h4>{favorite.post.title}</h4>
-              <p>{favorite.post.content}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* User's Posts Section */}
-      <div className="user-posts">
-        <h3>Your Posts</h3>
-        <ul>
-          {posts.map((post) => (
-            <li key={post.id}>
-              {editingPost && editingPost.id === post.id ? (
-                <div>
-                  <input
-                    type="text"
-                    value={editingPost.title}
-                    onChange={(e) =>
-                      setEditingPost({ ...editingPost, title: e.target.value })
-                    }
-                  />
-                  <textarea
-                    value={editingPost.content}
-                    onChange={(e) =>
-                      setEditingPost({
-                        ...editingPost,
-                        content: e.target.value,
-                      })
-                    }
-                  />
-                  <button onClick={handleSavePost}>Save</button>
-                  <button onClick={() => setEditingPost(null)}>Cancel</button>
-                </div>
-              ) : (
-                <>
-                  <h4>{post.title}</h4>
-                  <p>{post.content}</p>
-                  <button onClick={() => handleEditPost(post)}>Edit</button>
-                  <button onClick={() => handleDeletePost(post.id)}>
-                    Delete
-                  </button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
