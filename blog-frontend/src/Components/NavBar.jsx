@@ -59,7 +59,7 @@ function NavBar() {
               {/* Conditionally render profile link */}
               {isLoggedIn && (
                 <li className="nav-item">
-                  <Link className="nav-link" to="/profial">
+                  <Link className="nav-link" to="/profile">
                     <img
                       src="public/assets/images/user.png"
                       alt="Profile"
