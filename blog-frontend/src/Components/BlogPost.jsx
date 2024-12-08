@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../Api/axios";
+import axios from "../api/axios";  // Import the axios instance from your axios.js file
 import Head from "./Head";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
