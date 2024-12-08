@@ -24,7 +24,7 @@ class ApiController extends Controller
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|confirmed|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             ]);
-  
+
             $defaultImage = asset('storage/users/default-profile.png'); // Make sure the file exists in the storage
 
             $user = User::create([
@@ -33,13 +33,13 @@ class ApiController extends Controller
                 'password' => Hash::make($request->password),
                 'img' => $defaultImage, // Store the default image URL
             ]);
-    
+
             return response()->json([
                 'status' => true,
                 'message' => 'User registered successfully',
                 'data' => $user,
             ], 201);
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Registration failed',
@@ -47,7 +47,7 @@ class ApiController extends Controller
             ], 500);
         }
     }
-    
+
     // Login function (POST,formData)
     public function login(Request $request)
     {
@@ -74,7 +74,6 @@ class ApiController extends Controller
                 'status' => false,
                 'message' => 'Invalid email or password',
             ], 401);
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => false,
@@ -94,7 +93,6 @@ class ApiController extends Controller
                 'status' => true,
                 'data' => $data,
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => false,
@@ -114,7 +112,6 @@ class ApiController extends Controller
                 'status' => true,
                 'message' => 'Logout successfully',
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => false,
@@ -128,55 +125,41 @@ class ApiController extends Controller
     public function updateProfile(Request $request)
     {
         try {
-            // Validate the inputs
-            $request->validate([
+            // Validate inputs
+            $validatedData = $request->validate([
                 'name' => 'nullable|string|max:255',
                 'email' => 'nullable|email|unique:users,email,' . auth()->id(),
                 'password' => 'nullable|confirmed|min:8',
                 'bio' => 'nullable|string',
                 'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
-    
+
             // Get the authenticated user
             $user = auth()->user();
-    
+
             // Handle image upload and replacement
             if ($request->hasFile('img')) {
-                // Delete the old image if it exists
-                if ($user->img && strpos($user->img, 'default-profile.png') === false) {
-                    // Remove only if it's not the default image
-                    $oldImagePath = str_replace(asset('storage/'), '', $user->img);
-                    Storage::disk('public')->delete($oldImagePath);
-                }
-    
-                // Store the new image
-                $imagePath = $request->file('img')->store('users', 'public');
-                $user->img = asset('storage/users/' . $imagePath);
+                $this->updateUserImage($user, $request->file('img'));
             }
-    
-            // Update other fields if provided
-            if ($request->filled('name')) {
-                $user->name = $request->name;
-            }
-            if ($request->filled('email')) {
-                $user->email = $request->email;
-            }
+
+            // Update other fields
+            $user->fill(array_filter($validatedData, function ($value) {
+                return !is_null($value); // Exclude null values
+            }));
+
+            // Hash password if provided
             if ($request->filled('password')) {
                 $user->password = Hash::make($request->password);
             }
-            if ($request->filled('bio')) {
-                $user->bio = $request->bio;
-            }
-    
+
             // Save the updated user details
             $user->save();
-    
+
             return response()->json([
                 'status' => true,
                 'message' => 'Profile updated successfully',
                 'data' => $user,
             ], 200);
-    
         } catch (Exception $e) {
             return response()->json([
                 'status' => false,
@@ -185,5 +168,23 @@ class ApiController extends Controller
             ], 500);
         }
     }
-    
+
+    /**
+     * Update the user's profile image.
+     *
+     * @param \App\Models\User $user
+     * @param \Illuminate\Http\UploadedFile $image
+     */
+    protected function updateUserImage($user, $image)
+    {
+        // Delete the old image if it exists and is not the default image
+        if ($user->img && !str_contains($user->img, 'default-profile.png')) {
+            $oldImagePath = str_replace(asset('storage/'), '', $user->img);
+            Storage::disk('public')->delete($oldImagePath);
+        }
+
+        // Store the new image and update the user's image path
+        $imagePath = $image->store('users', 'public');
+        $user->img = asset('storage/' . $imagePath);
+    }
 }

@@ -6,6 +6,9 @@ import Footer from "./Footer";
 import Swal from 'sweetalert2';
 import "/public/assets/css/Post.css";
 
+
+import NewPost from "./NewPost";
+
 function BlogPost() {
     // User state from localStorage
     const [user, setUser] = useState({
@@ -318,6 +321,7 @@ if (searchQuery) {
         <>
             <Head />
             <NavBar />
+            <NewPost/>
             <div className="container ">
                 <div className="row">
                     <div className="col-md-8 offset-md-2 mt-4">

@@ -26,21 +26,34 @@ const Signup = () => {
       // Sending signup request to the backend (register endpoint)
       const response = await axios.post("/register", formData);
 
-      // Log the response to check if it's successful
       console.log("Signup response:", response.data);
 
-      // If the response indicates success (status true), navigate to login page or home
       if (response.data.status) {
-        alert(response.data.message); // Alert the success message
+        setError(null); // Clear error if successful
         navigate("/login"); // Redirect to login page
       } else {
-        // If signup failed, show error message and stay on signup page
-        setError(response.data.message || "Signup failed. Please try again.");
+        const backendErrors = response.data.error;
+        if (typeof backendErrors === "string") {
+          setError(backendErrors.split(" (")[0]); // Show only text before "("
+        } else if (typeof backendErrors === "object") {
+          const firstError = Object.values(backendErrors).flat()[0];
+          setError(firstError.split(" (")[0]); // Show only text before "("
+        } else {
+          setError("An unknown error occurred. Please try again.");
+        }
       }
     } catch (err) {
-      // Catch any unexpected errors and display them
-      console.error("Signup error:", err);
-      setError("An unexpected error occurred. Please try again.");
+      console.error("Signup error:", err.response);
+
+      const backendErrors = err.response?.data?.error;
+      if (typeof backendErrors === "string") {
+        setError(backendErrors.split(" (")[0]); // Show only text before "("
+      } else if (typeof backendErrors === "object") {
+        const firstError = Object.values(backendErrors).flat()[0];
+        setError(firstError.split(" (")[0]); // Show only text before "("
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
