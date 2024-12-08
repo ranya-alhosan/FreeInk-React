@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../Api/axios"; // Ensure this is the correct axios instance
 import { useNavigate } from "react-router-dom";
 
-const ProfilePage = () => {
+const EditProfile = () => {
   const [userData, setUserData] = useState({
     name: '',
     email: '',
@@ -150,4 +150,4 @@ const ProfilePage = () => {
     </div>
   );
 };
-export default ProfilePage
+export default EditProfile
