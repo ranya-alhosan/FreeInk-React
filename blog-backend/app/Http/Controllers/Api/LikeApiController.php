@@ -7,6 +7,7 @@ use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LikeApiController extends Controller
 {
@@ -59,6 +60,19 @@ class LikeApiController extends Controller
             'data' => $like,
         ], 201);
     }
+
+    function index(){
+        try {
+            $likes = Like::with(['user', 'post'])->get();
+        
+            return response()->json([
+                'success' => true,
+                'data' => $likes,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching likes: ' . $e->getMessage());
+    }
     
 
+}
 }
