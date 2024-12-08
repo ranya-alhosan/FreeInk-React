@@ -51,6 +51,7 @@ function NewPost() {
         const formData = new FormData();
         formData.append("title", title);
         formData.append("content", content);
+        
         if (img) {
             formData.append("img", img);
         }
