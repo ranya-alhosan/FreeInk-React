@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "../Api/axios";
 import Footer from "./Footer";
@@ -19,7 +18,6 @@ const Profile = () => {
     try {
       const response = await axios.get("/profile");
       setUser(response.data.data);
-      setUser(response.data.data);
     } catch (error) {
       console.error("Error fetching user info:", error);
     }
@@ -39,14 +37,15 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    const fetchData = async () => {
+      await fetchProfile();
+      setLoading(false); // Loading ends after fetching profile
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
     if (user.id) fetchPosts();
-    setLoading(false);
-  }, [user]);
   }, [user]);
 
   const handleLogout = () => {
@@ -60,7 +59,7 @@ const Profile = () => {
 
   const handleSavePost = async () => {
     try {
-      const response = await axios.put(`/posts/updatepost/${editingPost.id}`, {
+      await axios.put(`/posts/updatepost/${editingPost.id}`, {
         title: editingPost.title,
         content: editingPost.content,
       });
@@ -78,7 +77,7 @@ const Profile = () => {
   const handleDeletePost = async (postId) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        const response = await axios.delete(`/posts/deletepost/${postId}`);
+        await axios.delete(`/posts/deletepost/${postId}`);
         setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
       } catch (error) {
         console.error("Error deleting post:", error.response || error.message);
