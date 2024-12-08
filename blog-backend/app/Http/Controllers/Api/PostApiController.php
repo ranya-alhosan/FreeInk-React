@@ -75,7 +75,7 @@ class PostApiController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'The image must be of type: jpeg, png, jpg, gif. Please check the file extension.',
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
