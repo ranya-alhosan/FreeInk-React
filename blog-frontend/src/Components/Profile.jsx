@@ -17,7 +17,7 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const response = await axios.get("/profile");
-      setUser(response.data.data); // Update user data after fetching
+      setUser(response.data.data);
     } catch (error) {
       console.error("Error fetching user info:", error);
     }
@@ -38,12 +38,12 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile();
-  }, []); // Fetch profile data initially
+  }, []);
 
   useEffect(() => {
     if (user.id) fetchPosts();
     setLoading(false);
-  }, [user]); // Re-fetch posts when user data is available
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
