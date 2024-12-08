@@ -8,12 +8,11 @@ function NewPost() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [img, setImg] = useState(null);
-    const [categoryId, setCategoryId] = useState(""); // Store selected category ID
-    const [showDropdown, setShowDropdown] = useState(false); // Toggle dropdown visibility
+    const [categoryId, setCategoryId] = useState("");
+    const [showDropdown, setShowDropdown] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    // List of categories
     const categories = [
         { id: 1, name: "Health & Sport" },
         { id: 2, name: "Romance & Relationships" },
@@ -25,13 +24,11 @@ function NewPost() {
         { id: 8, name: "History & Culture" },
     ];
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Clear previous error
-        setSuccess(""); // Clear previous success message
+        setError("");
+        setSuccess("");
 
-        // Validation checks
         if (!title.trim()) {
             setError("Title is required.");
             return;
@@ -89,75 +86,99 @@ function NewPost() {
         <>
             <Head />
             <NavBar />
-            <div>
-                <div className="container">
-                    <h2>Add New Post</h2>
-                    {error && <p style={{ color: "red" }}>{error}</p>}
-                    {success && <p style={{ color: "green" }}>{success}</p>}
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label className="form-label">Title</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Content</label>
-                            <textarea
-                                className="form-control"
-                                rows="5"
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                required
-                            ></textarea>
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Image</label>
-                            <input
-                                type="file"
-                                className="form-control"
-                                onChange={(e) => setImg(e.target.files[0])}
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Category</label>
-                            <div className="dropdown">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary dropdown-toggle"
-                                    onClick={() => setShowDropdown(!showDropdown)}
-                                >
-                                    {categoryId
-                                        ? categories.find((c) => c.id === parseInt(categoryId))
-                                              ?.name
-                                        : "Select a category"}
-                                </button>
-                                {showDropdown && (
-                                    <ul className="dropdown-menu show">
-                                        {categories.map((category) => (
-                                            <li
-                                                key={category.id}
-                                                className="dropdown-item cursor-pointer"
-                                                onClick={() => {
-                                                    setCategoryId(category.id);
-                                                    setShowDropdown(false); // Close dropdown
-                                                }}
-                                            >
-                                                {category.name}
-                                            </li>
-                                        ))}
-                                    </ul>
+            <div className="container py-5">
+                <div className="row justify-content-center mt-5">
+                    <div className="col-md-8">
+                        <div className="card shadow-lg border-0 rounded-4">
+                            <div className="card-header bg-gradient text-white rounded-top p-4">
+                                <h3 className="text-center fw-bold mb-0">
+                                    <i className="bi bi-pencil-square me-2"></i> Add New Post
+                                </h3>
+                            </div>
+                            <div className="card-body p-4">
+                                {error && <div className="alert alert-danger">{error}</div>}
+                                {success && (
+                                    <div className="alert alert-success">{success}</div>
                                 )}
+                                <form onSubmit={handleSubmit}>
+                                    <div className="mb-4">
+                                        <label className="form-label fw-semibold">
+                                            <i className="bi bi-card-text me-2"></i> Title
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control rounded-pill"
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            placeholder="Enter your post title"
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label fw-semibold">
+                                            <i className="bi bi-file-text me-2"></i> Content
+                                        </label>
+                                        <textarea
+                                            className="form-control rounded-3"
+                                            rows="5"
+                                            value={content}
+                                            onChange={(e) => setContent(e.target.value)}
+                                            placeholder="Write your post content here"
+                                        ></textarea>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label fw-semibold">
+                                            <i className="bi bi-image me-2"></i> Image
+                                        </label>
+                                        <input
+                                            type="file"
+                                            className="form-control rounded-pill"
+                                            onChange={(e) => setImg(e.target.files[0])}
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label fw-semibold">
+                                            <i className="bi bi-list-task me-2"></i> Category
+                                        </label>
+                                        <div className="dropdown">
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary dropdown-toggle rounded-pill"
+                                                onClick={() => setShowDropdown(!showDropdown)}
+                                            >
+                                                {categoryId
+                                                    ? categories.find(
+                                                          (c) => c.id === parseInt(categoryId)
+                                                      )?.name
+                                                    : "Select a category"}
+                                            </button>
+                                            {showDropdown && (
+                                                <ul className="dropdown-menu show rounded-3">
+                                                    {categories.map((category) => (
+                                                        <li
+                                                            key={category.id}
+                                                            className="dropdown-item cursor-pointer"
+                                                            onClick={() => {
+                                                                setCategoryId(category.id);
+                                                                setShowDropdown(false);
+                                                            }}
+                                                        >
+                                                            {category.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary w-100 rounded-pill fw-bold btn-gradient"
+                                    >
+                                        <i className="bi bi-send-fill me-2"></i> Submit
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-primary">
-                            Submit
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
             <Footer />
