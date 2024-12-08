@@ -318,10 +318,10 @@ if (searchQuery) {
         <>
             <Head />
             <NavBar />
-            <div className="container mt-5">
+            <div className="container ">
                 <div className="row">
-                    <div className="col-md-8 offset-md-2">
-                        <h2 className="mb-4">All Posts</h2>
+                    <div className="col-md-8 offset-md-2 mt-4">
+                     
                         
                         {/* Search Bar */}
                         <div className="input-group mb-3">
