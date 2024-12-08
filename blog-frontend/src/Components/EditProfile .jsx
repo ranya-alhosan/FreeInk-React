@@ -150,4 +150,8 @@ const EditProfile = () => {
     </div>
   );
 };
+<<<<<<< HEAD
 export default EditProfile;
+=======
+export default ProfilePage
+>>>>>>> f55c142c4e92c5f110e5f9682d3a77a7bb2c0258
