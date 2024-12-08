@@ -28,6 +28,14 @@ const Login = () => {
       if (response.status === 200 && response.data.status) {
         // Successful login
         localStorage.setItem("token", response.data.token); // Save the token to localStorage
+        localStorage.setItem("userId", response.data.user.id);
+        localStorage.setItem("userName", response.data.user.name);
+        localStorage.setItem("userEmail", response.data.user.email);
+        localStorage.setItem("userEmailVerified", response.data.user.email_verified_at);
+        localStorage.setItem("userCreatedAt", response.data.user.created_at);
+        localStorage.setItem("userUpdatedAt", response.data.user.updated_at);
+        localStorage.setItem("userImg", response.data.user.img);
+        localStorage.setItem("userBio", response.data.user.bio);
         navigate("/"); // Redirect to home or profile page
       } else {
         // If status is not true in the response body
