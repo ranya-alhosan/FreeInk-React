@@ -8,14 +8,14 @@ function CategoryFilter({ categories, selectedCategory, onCategoryChange, onShow
             {categories.map((category, index) => (
                 <Button
                     key={index}
-                    variant={selectedCategory === category ? "success" : "primary"} 
+                    variant={selectedCategory === category ? "success" : "primary"} // تغيير اللون بناءً على الفئة المحددة
                     onClick={() => onCategoryChange(category)}
                     className="category-btn m-1"
                 >
                     {category}
                 </Button>
             ))}
-           
+            {/* زر عرض جميع البوستات */}
             <Button
                 variant="warning"
                 onClick={onShowAllPosts}
