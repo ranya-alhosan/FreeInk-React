@@ -1,139 +1,126 @@
-import React, { useEffect, useState } from "react";
-import axios from "../Api/axios";
+import React, { useState, useEffect } from 'react';
+import axios from "../Api/axios"; // Import Axios instance
+import { Navbar } from 'react-bootstrap';
+import Head from './Head';
+import NavBar from './NavBar';
+import Footer from './Footer'
 
-const UsersPosts = () => {
+const UserPosts = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editPost, setEditPost] = useState(null);
+  const [editPost, setEditPost] = useState({
+    title: '',
+    content: '',
+    category_id: '',
+    img: null, // This is fine because it's not bound to an input field
+  });
+  const [loading, setLoading] = useState(false);
 
+  // Fetch posts
   useEffect(() => {
-    const fetchUserPosts = async () => {
+    const fetchPosts = async () => {
+      setLoading(true);
       try {
-        const userId = JSON.parse(localStorage.getItem("userId")); // Get user ID from localStorage
-        const response = await axios.get("/posts"); // Fetch all posts from backend
-        const userPosts = response.data.data.filter((post) => post.user_id === userId); // Filter posts by user ID
+        const response = await axios.get('/posts');
+        const userId = JSON.parse(localStorage.getItem('userId')); // Assumes user ID is stored in localStorage
+        const userPosts = response.data.data.filter((post) => post.user_id === userId);
         setPosts(userPosts);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load user posts.");
-        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
       }
+      setLoading(false);
     };
 
-    fetchUserPosts();
+    fetchPosts();
   }, []);
 
-  const handleDelete = async (postId) => {
+  // Handle delete post
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      try {
+        await axios.delete(`/deletepost/${id}`);
+        setPosts(posts.filter((post) => post.id !== id));
+      } catch (error) {
+        console.error('Error deleting post:', error);
+      }
+    }
+  };
+
+  // Handle save edits
+  const handleSave = async (id) => {
     try {
-      const token = localStorage.getItem("authToken");
-      await axios.delete(`/deletepost/${postId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      console.log(id);
+      const formData = new FormData();
+      if (editPost.title) formData.append('title', editPost.title);
+      if (editPost.content) formData.append('content', editPost.content);
+      if (editPost.category_id) formData.append('category_id', editPost.category_id);
+      if (editPost.img) formData.append('img', editPost.img);
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
+    
+      const response = await axios.put(`/updatepost/${id}`, formData);
+      const updatedPost = response.data.data;
+      console.log(updatedPost);
 
-      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
-      alert("Post deleted successfully!");
+      setPosts(posts.map((post) => (post.id === id ? updatedPost : post)));
+      setEditPost(null);
     } catch (error) {
-      console.error("Failed to delete post:", error);
-      alert("Failed to delete post. Please try again.");
+      
+      console.error('Error updating post:', error);
     }
   };
- const handleUpdate = async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData();
-    formData.append("title", editPost.title);
-    formData.append("content", editPost.content);
-    if (editPost.img instanceof File) {
-      formData.append("img", editPost.img);  // Ensure the image is appended correctly
-    }
-
-    const response = await axios.put(`/updatepost/${editPost.id}`, formData, {
-      headers: { 
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "multipart/form-data"  // Explicitly set the content type to multipart
-      },
-    });
-
-    console.log(response.data); 
-
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => (post.id === editPost.id ? { ...post, ...editPost } : post))
-    );
-
-    setEditPost(null);
-    alert("Post updated successfully!");
-  } catch (err) {
-    console.error(err); // Log any errors
-    alert("Failed to update the post.");
-  }
-};
-
-
-  const handleEdit = (post) => {
-    setEditPost(post);
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
-    <div className="user-posts">
-      <h2>Your Posts</h2>
-      {posts.length === 0 ? (
-        <p>You haven't created any posts yet.</p>
-      ) : (
+    <div>
+
+      <h1>Your Posts</h1>
+      {loading ? (
+        <p>Loading...</p>
+      ) : posts.length > 0 ? (
         posts.map((post) => (
           <div key={post.id} className="post">
-            <h3>{post.title}</h3>
-            <p>{post.content}</p>
-            {post.img && <img src={post.img} alt={post.title} />}
-            <p>
-              <strong>Likes:</strong> {post.likes_count} | <strong>Dislikes:</strong> {post.dislikes_count}
-            </p>
-            <button onClick={() => handleEdit(post)}>Edit</button>
-            <button onClick={() => handleDelete(post.id)}>Delete</button>
-          </div>
-        ))
-      )}
-
-      {editPost && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Edit Post</h2>
-            <form onSubmit={handleUpdate}>
-              <label>
-                Title:
+            {editPost && editPost.id === post.id ? (
+              <div>
                 <input
                   type="text"
-                  value={editPost.title}
+                  placeholder="Title"
+                  defaultValue={post.title}
                   onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
                 />
-              </label>
-              <label>
-                Content:
-                <textarea
-                  value={editPost.content}
-                  onChange={(e) => setEditPost({ ...editPost, content: e.target.value })}
+               <textarea
+               value={editPost.content || ''} // Ensure it's always a string
+                onChange={(e) => setEditPost({ ...editPost, content: e.target.value })}
+               />
+                <input
+                  type="number"
+                  placeholder="Category ID"
+                  defaultValue={post.category_id}
+                  onChange={(e) => setEditPost({ ...editPost, category_id: e.target.value })}
                 />
-              </label>
-              <label>
-                Upload Image:
                 <input
                   type="file"
                   onChange={(e) => setEditPost({ ...editPost, img: e.target.files[0] })}
                 />
-              </label>
-              <button type="submit">Update</button>
-              <button type="button" onClick={() => setEditPost(null)}>
-                Cancel
-              </button>
-            </form>
+                <button onClick={() => handleSave(post.id)}>Save</button>
+                <button onClick={() => setEditPost(null)}>Cancel</button>
+              </div>
+            ) : (
+              <div>
+                <h2>{post.title}</h2>
+                <p>{post.content}</p>
+                <img src={post.img} alt="Post" style={{ width: '100px' }} />
+                <p>Category: {post.category_id}</p>
+                <button onClick={() => setEditPost(post)}>Edit</button>
+                <button onClick={() => handleDelete(post.id)}>Delete</button>
+              </div>
+            )}
           </div>
-        </div>
+        ))
+      ) : (
+        <p>You have no posts.</p>
       )}
     </div>
   );
 };
 
-export default UsersPosts;
+export default UserPosts;
