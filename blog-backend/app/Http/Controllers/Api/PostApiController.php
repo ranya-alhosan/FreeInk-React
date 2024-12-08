@@ -93,6 +93,8 @@ class PostApiController extends Controller
     public function updatePost(Request $request, $id)
     {
         try {
+
+            
             $post = Post::find($id);
 
             if (!$post || $post->user_id !== Auth::id()) {
@@ -117,6 +119,7 @@ class PostApiController extends Controller
 
                 // Store the new image
                 $imagePath = $request->file('img')->store('posts', 'public');
+
                 $post->img = $imagePath; // Update the image path
             }
 
@@ -141,6 +144,7 @@ class PostApiController extends Controller
                 'message' => 'Failed to update post. Please try again later.',
             ], 500);
         }
+        
     }
 
 
