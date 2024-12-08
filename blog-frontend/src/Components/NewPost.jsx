@@ -11,15 +11,20 @@ function NewPost() {
     const [showModal, setShowModal] = useState(false);
 
     const categories = [
-        { id: 1, name: "Health & Sport" },
-        { id: 2, name: "Romance & Relationships" },
-        { id: 3, name: "Food & Recipes" },
-        { id: 4, name: "Travel & Adventure" },
-        { id: 5, name: "Education & Learning" },
-        { id: 6, name: "Politics & Current Affairs" },
-        { id: 7, name: "Art & Creativity" },
-        { id: 8, name: "History & Culture" },
+        { id: 1, name: "Health & Sport", icon: "🏋️" },
+        { id: 2, name: "Romance & Relationships", icon: "❤️" },
+        { id: 3, name: "Food & Recipes", icon: "🍳" },
+        { id: 4, name: "Travel & Adventure", icon: "✈️" },
+        { id: 5, name: "Education & Learning", icon: "📚" },
+        { id: 6, name: "Politics & Current Affairs", icon: "🗳️" },
+        { id: 7, name: "Art & Creativity", icon: "🎨" },
+        { id: 8, name: "History & Culture", icon: "🏛️" },
     ];
+
+    const handleModalToggle = () => {
+        setShowModal(!showModal);
+        document.body.style.overflow = showModal ? "auto" : "hidden"; 
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -70,9 +75,7 @@ function NewPost() {
             setContent("");
             setImg(null);
             setCategoryId("");
-            setShowModal(false);
-
-            // إعادة التوجيه إلى صفحة blogPost
+            handleModalToggle();
             window.location.href = "http://localhost:5173/blogPost";
         } catch (error) {
             console.error("Error adding post:", error);
@@ -86,24 +89,38 @@ function NewPost() {
         <>
             <div className="container py-5">
                 <button
-                    className="btn btn-primary rounded-pill"
-                    onClick={() => setShowModal(true)}
+                    className="btn btn-primary rounded-pill mb-3 " 
+                    onClick={handleModalToggle}
                 >
                     Add New Post
                 </button>
 
                 {showModal && (
                     <div className="modal show d-block" tabIndex="-1">
-                        <div className="modal-dialog">
+                        <div className="modal-dialog modal-dialog-scrollable">
                             <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Add New Post</h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setShowModal(false)}
-                                    ></button>
-                                </div>
+                            <div className="modal-header" style={{ backgroundColor: "#007bff", borderBottom: "2px solid #0056b3" }}>
+    <h5
+        className="modal-title"
+        style={{
+            color: "#ffffff",
+            fontWeight: "bold", 
+            fontSize: "1.25rem", 
+        }}
+    >
+        Add New Post
+    </h5>
+    <button
+        type="button"
+        className="btn-close"
+        onClick={handleModalToggle}
+        style={{
+            backgroundColor: "#0056b3", 
+            border: "none",
+        }}
+    ></button>
+</div>
+
                                 <div className="modal-body">
                                     {error && <div className="alert alert-danger">{error}</div>}
                                     {success && (
@@ -140,18 +157,30 @@ function NewPost() {
                                         </div>
                                         <div className="mb-3">
                                             <label className="form-label">Category</label>
-                                            <select
-                                                className="form-select"
-                                                value={categoryId}
-                                                onChange={(e) => setCategoryId(e.target.value)}
-                                            >
-                                                <option value="">Select a category</option>
+                                            <div className="row">
                                                 {categories.map((category) => (
-                                                    <option key={category.id} value={category.id}>
-                                                        {category.name}
-                                                    </option>
+                                                    <div key={category.id} className="col-6 col-md-3 mb-3">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setCategoryId(category.id)}
+                                                            className={`btn btn-outline-primary d-flex flex-column align-items-center justify-content-center p-3 w-100 ${
+                                                                categoryId === category.id
+                                                                    ? "bg-primary text-white"
+                                                                    : "bg-light text-primary"
+                                                            }`}
+                                                            style={{
+                                                                height: "120px",
+                                                                borderRadius: "10px",
+                                                            }}
+                                                        >
+                                                            <span className="fs-4">{category.icon}</span>
+                                                            <span className="small" style={{ whiteSpace: "pre-line" }}>
+                                                                {category.name.split(" ").join("\n")}
+                                                            </span>
+                                                        </button>
+                                                    </div>
                                                 ))}
-                                            </select>
+                                            </div>
                                         </div>
                                         <button type="submit" className="btn btn-primary w-100">
                                             Submit
