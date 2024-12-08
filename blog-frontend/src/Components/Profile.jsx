@@ -19,6 +19,7 @@ const Profile = () => {
     try {
       const response = await axios.get("/profile");
       setUser(response.data.data);
+      setUser(response.data.data);
     } catch (error) {
       console.error("Error fetching user info:", error);
     }
@@ -40,10 +41,12 @@ const Profile = () => {
   useEffect(() => {
     fetchProfile();
   }, []);
+  }, []);
 
   useEffect(() => {
     if (user.id) fetchPosts();
     setLoading(false);
+  }, [user]);
   }, [user]);
 
   const handleLogout = () => {
@@ -175,4 +178,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
