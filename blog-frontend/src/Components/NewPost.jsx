@@ -70,7 +70,6 @@ function NewPost() {
                     },
                 }
             );
-
             setSuccess("Post added successfully!");
             setTitle("");
             setContent("");
