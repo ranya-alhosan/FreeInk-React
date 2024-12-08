@@ -318,10 +318,10 @@ if (searchQuery) {
         <>
             <Head />
             <NavBar />
-            <div className="container mt-5">
+            <div className="container ">
                 <div className="row">
-                    <div className="col-md-8 offset-md-2">
-                        <h2 className="mb-4">All Posts</h2>
+                    <div className="col-md-8 offset-md-2 mt-4">
+                     
                         
                         {/* Search Bar */}
                         <div className="input-group mb-3">
@@ -344,28 +344,31 @@ if (searchQuery) {
                         </div>
 
                         {/* Category Filter */}
+
                         <div className="mb-3">
-                            <div className="btn-group flex-wrap" role="group">
-                                <button 
-                                    type="button" 
-                                    className={`btn btn-${selectedCategory === '' ? 'primary' : 'outline-primary'}`}
-                                    onClick={showAllPosts}
-                                >
-                                    All Categories
-                                </button>
-                                {categories.map((category) => (
-                                    <button 
-                                        key={category} 
-                                        type="button" 
-                                        className={`btn btn-${selectedCategory === category ? 'primary' : 'outline-primary'}`}
-                                        onClick={() => filterPostsByCategory(category)}
-                                    >
-                                        {category}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        
+    <div className="border p-3 rounded">
+        <div className="btn-group flex-wrap" role="group">
+            <button 
+                type="button" 
+                className={`btn btn-${selectedCategory === '' ? 'primary' : 'outline-primary'}`}
+                onClick={showAllPosts}
+            >
+                All Categories
+            </button>
+            {categories.map((category) => (
+                <button 
+                    key={category} 
+                    type="button" 
+                    className={`btn btn-${selectedCategory === category ? 'primary' : 'outline-primary'}`}
+                    onClick={() => filterPostsByCategory(category)}
+                >
+                    {category}
+                </button>
+            ))}
+        </div>
+    </div>
+</div>
+
                         {error && (
                             <div className="alert alert-danger" role="alert">
                                 {error}
