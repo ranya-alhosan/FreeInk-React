@@ -6,6 +6,7 @@
   import NavBar from './NavBar';
   import Footer from './Footer';
 import EditProfile from "./EditProfile ";
+import Favorites from "./Favorites";
   // import UserFavorites from './UserFavorites';
 
   const ProfilePage = () => {
@@ -98,8 +99,8 @@ import EditProfile from "./EditProfile ";
           <p className="sectionDivider">Plogs</p>
           <UsersPosts />
           {/* <UserFavorites/> */}
-          <p className="sectionDivider"></p>
-
+          <p className="sectionDivider">Favorites</p>
+           <Favorites/>
         </div>
         <Footer />
       </>

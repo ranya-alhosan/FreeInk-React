@@ -12,6 +12,7 @@ import Profile from './Components/Profile';
 import Home from './Components/Home';
 import Contact from './Components/Contact'
 import EditProfile from "./Components/EditProfile ";
+import Favorites from "./Components/Favorites";
 
 
 const Root = () => {
@@ -38,6 +39,8 @@ const Root = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/favorites" element={<Favorites />} />
+
 
       </Routes>
 
