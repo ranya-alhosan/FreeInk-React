@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PostCard from "./PostCard";
 
+
 function PostList({ posts, user, query }) {
   const [filteredPosts, setFilteredPosts] = useState(posts);
 
@@ -19,6 +20,7 @@ function PostList({ posts, user, query }) {
 
   return (
     <div className="post-list">
+
       {filteredPosts.length > 0 ? (
         filteredPosts.map((post) => (
           <PostCard key={post.id} post={post} user={user} />

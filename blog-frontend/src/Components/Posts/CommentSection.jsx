@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
-import apiClient from "../../Api/apiClient.js";
+import apiClient from "../../Api/apiClient";
 
-function CommentSection({ postId }) {
+function CommentSection({ postId, userId }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [isEditing, setIsEditing] = useState(null);
+  const [editContent, setEditContent] = useState("");
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const response = await apiClient.get(`/comments/${postId}`);
-        setComments(response.data.data || []);
+        if (response.data.success) {
+          setComments(response.data.data || []);
+        } else {
+          console.error(response.data.message);
+        }
       } catch (err) {
-        console.error("Failed to load comments:", err);
+        console.error("Error fetching comments:", err);
       }
     };
     fetchComments();
@@ -24,11 +30,44 @@ function CommentSection({ postId }) {
         content: newComment,
         post_id: postId,
       });
-      if (response.data.success) setComments([...comments, response.data.data]);
+      if (response.data.success) {
+        setComments([...comments, response.data.data]);
+        setNewComment(""); // Reset input
+      }
     } catch (err) {
       console.error("Error adding comment:", err);
-    } finally {
-      setNewComment("");
+    }
+  };
+
+  const handleDelete = async (commentId) => {
+    try {
+      const response = await apiClient.delete(`/comments/${commentId}`);
+      if (response.data.success) {
+        setComments(comments.filter(comment => comment.id !== commentId));
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+    }
+  };
+
+  const handleEdit = async (commentId) => {
+    try {
+      const response = await apiClient.put(`/comments/${commentId}`, {
+        content: editContent,
+      });
+      if (response.data.success) {
+        setComments(
+          comments.map((comment) =>
+            comment.id === commentId ? { ...comment, content: editContent } : comment
+          )
+        );
+        setIsEditing(null); // Close edit mode
+        setEditContent("");
+      }
+    } catch (err) {
+      console.error("Error editing comment:", err);
     }
   };
 
@@ -36,18 +75,69 @@ function CommentSection({ postId }) {
     <div>
       <div>
         {comments.map((comment) => (
-          <div key={comment.id}>
-            <strong>{comment.user?.name || "Anonymous"}</strong>: {comment.content}
+          <div key={comment.id} className="comment">
+            <div className="d-flex justify-content-between">
+              <strong>{comment.user?.name || "Anonymous"}</strong>
+
+              {/* تحقق إذا كانت userId و comment.user.id متطابقين */}
+              {comment.user?.id === userId && (
+                <>
+                  <button
+                    onClick={() => {
+                      setIsEditing(comment.id);
+                      setEditContent(comment.content);
+                    }}
+                    className="btn btn-warning btn-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(comment.id)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* عرض المحتوى بناءً على حالة التحرير */}
+            {isEditing === comment.id ? (
+              <div>
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                />
+                <button
+                  onClick={() => handleEdit(comment.id)}
+                  className="btn btn-success btn-sm"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditing(null)}
+                  className="btn btn-secondary btn-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <p>{comment.content}</p>
+            )}
           </div>
         ))}
       </div>
-      <input
-        type="text"
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        placeholder="Add a comment"
-      />
-      <button onClick={addComment}>Submit</button>
+      
+      {/* Comment input box */}
+      <div>
+        <input
+          type="text"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Add a comment"
+        />
+        <button onClick={addComment}>Submit</button>
+      </div>
     </div>
   );
 }
