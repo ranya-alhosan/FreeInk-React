@@ -51,8 +51,6 @@ function BlogPost() {
     };
     fetchPosts();
   }, []);
-  
-  
 
   const handleLikeDislike = async (action, postId) => {
     try {
@@ -60,17 +58,17 @@ function BlogPost() {
         post_id: postId,
         status: action,
       });
-  
+
       if (response.data.success) {
         console.log(response.data.message);
-  
+
         // تحديث الحالة في الواجهة
         setPosts((prevPosts) =>
           prevPosts.map((post) =>
             post.id === postId ? { ...post, status: response.data.status } : post
           )
         );
-  
+
         // تخزين الحالة في localStorage
         localStorage.setItem(`post_${postId}_status`, response.data.status);
       } else {
@@ -80,8 +78,8 @@ function BlogPost() {
       console.error("Error updating like/dislike:", error);
     }
   };
-  
 
+  // تصفية المنشورات حسب الفئة وكلمة البحث
   const filteredPosts = posts.filter((post) => {
     const matchesCategory = selectedCategory ? post.category?.name === selectedCategory : true;
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());

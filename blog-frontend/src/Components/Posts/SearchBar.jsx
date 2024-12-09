@@ -8,7 +8,7 @@ function SearchBar({ query, setQuery }) {
         className="form-control"
         placeholder="Search posts..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)} // عند تغيير الاستعلام
       />
       <div className="input-group-append">
         <button className="btn btn-outline-danger" onClick={() => setQuery("")}>
