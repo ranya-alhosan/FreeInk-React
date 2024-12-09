@@ -7,6 +7,9 @@ import Swal from 'sweetalert2';
 import "/public/assets/css/Post.css";
 import LikeButton from './LikeButton';  // استيراد مكون LikeButton
 
+
+import NewPost from "./NewPost";
+
 function BlogPost() {
     // User state from localStorage
     const [user, setUser] = useState({
@@ -165,7 +168,10 @@ function BlogPost() {
         <>
             <Head />
             <NavBar />
-            <div className="container">
+
+            <NewPost/>
+            <div className="container ">
+
                 <div className="row">
                     <div className="col-md-8 offset-md-2 mt-4">
                         {/* Search Bar and Category Filter as before */}

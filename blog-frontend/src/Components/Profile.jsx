@@ -1,179 +1,164 @@
 import React, { useState, useEffect } from "react";
 import axios from "../Api/axios";
-import Footer from "./Footer";
-import { useNavigate } from "react-router-dom";
+import UsersPosts from "./UsersBlog";
 import "/public/assets/css/profile.css";
-import Head from "./Head";
-import NavBar from "./NavBar";
+import Head from './Head';
+import NavBar from './NavBar';
+import Footer from './Footer';
 
-const Profile = () => {
-  const [user, setUser] = useState({});
-  const [posts, setPosts] = useState([]);
-  const [editingPost, setEditingPost] = useState(null);
+const ProfilePage = () => {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  // Fetch user profile
-  const fetchProfile = async () => {
-    try {
-      const response = await axios.get("/profile");
-      setUser(response.data.data);
-    } catch (error) {
-      console.error("Error fetching user info:", error);
-    }
-  };
-
-  // Fetch posts after profile data is fetched
-  const fetchPosts = async () => {
-    try {
-      const response = await axios.get("/posts");
-      const userPosts = response.data.data.filter(
-        (post) => post.user_id === user.id
-      );
-      setPosts(userPosts);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
+  const [error, setError] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    bio: '',
+    img: null,
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchProfile();
-      setLoading(false); // Loading ends after fetching profile
-    };
-    fetchData();
+    axios.get('/profile')
+      .then((response) => {
+        setUser(response.data.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Failed to fetch profile data");
+        setLoading(false);
+      });
   }, []);
 
-  useEffect(() => {
-    if (user.id) fetchPosts();
-  }, [user]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+  const handleEditClick = () => {
+    setFormData({
+      name: user.name,
+      email: user.email,
+      bio: user.bio,
+      password: '',
+      password_confirmation: ''
+    });
+    setShowEditModal(true);
   };
 
-  const handleEditPost = (post) => {
-    setEditingPost(post);
+  const handleCloseModal = () => setShowEditModal(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSavePost = async () => {
-    try {
-      await axios.put(`/posts/updatepost/${editingPost.id}`, {
-        title: editingPost.title,
-        content: editingPost.content,
-      });
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.id === editingPost.id ? { ...editingPost } : post
-        )
-      );
-      setEditingPost(null);
-    } catch (error) {
-      console.error("Error updating post:", error.response || error.message);
-    }
+  const handleFileChange = (e) => setFormData((prev) => ({ ...prev, img: e.target.files[0] }));
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => formDataToSend.append(key, formData[key]));
+    console.log(formDataToSend);
+    axios.put('/update', formDataToSend)
+      .then((response) => {
+        setUser(response.data.data);
+        setShowEditModal(false);
+      })
+      .catch(() => setError("Failed to update profile data"));
   };
 
-  const handleDeletePost = async (postId) => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      try {
-        await axios.delete(`/posts/deletepost/${postId}`);
-        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
-      } catch (error) {
-        console.error("Error deleting post:", error.response || error.message);
-      }
-    }
-  };
-
-  const handleFavorite = async (postId) => {
-    try {
-      const response = await axios.post("/favorites", {
-        post_id: postId,
-        status: 1, // Mark as favorite
-      });
-      console.log(response.data.message);
-    } catch (error) {
-      console.error("Error adding to favorites:", error.response || error.message);
-    }
-  };
-
-  const handleUnfavorite = async (postId) => {
-    try {
-      const response = await axios.post("/favorites", {
-        post_id: postId,
-        status: 0, // Unmark as favorite
-      });
-      console.log(response.data.message);
-    } catch (error) {
-      console.error("Error removing from favorites:", error.response || error.message);
-    }
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <>
       <Head />
       <NavBar />
-      <div className="profile-container">
-        <div className="profile-header">
-          <img src={user.img} alt={user.name} className="profile-image" />
-          <h2>{user.name}</h2>
-          <p>{user.bio}</p>
-          <button onClick={() => navigate("/edit-profile")}>Edit Profile</button>
-          <button onClick={handleLogout}>Logout</button>
+      <div className="profile-page">
+        <div className="banner">
+          {/* Edit Icon Button */}
+          <button className="edit-profile-btn" onClick={handleEditClick}>
+            <i className="fas fa-edit"></i> {/* FontAwesome icon */}
+          </button>
         </div>
-        <div className="profile-posts">
-          <h3>Your Posts</h3>
-          <ul>
-            {posts.map((post) => (
-              <li key={post.id}>
-                {editingPost && editingPost.id === post.id ? (
-                  <div>
-                    <input
-                      type="text"
-                      value={editingPost.title}
-                      onChange={(e) =>
-                        setEditingPost({
-                          ...editingPost,
-                          title: e.target.value,
-                        })
-                      }
-                    />
-                    <textarea
-                      value={editingPost.content}
-                      onChange={(e) =>
-                        setEditingPost({
-                          ...editingPost,
-                          content: e.target.value,
-                        })
-                      }
-                    />
-                    <button onClick={handleSavePost}>Save</button>
-                    <button onClick={() => setEditingPost(null)}>Cancel</button>
-                  </div>
-                ) : (
-                  <>
-                    <h4>{post.title}</h4>
-                    <p>{post.content}</p>
-                    <button onClick={() => handleEditPost(post)}>Edit</button>
-                    <button onClick={() => handleDeletePost(post.id)}>
-                      Delete
-                    </button>
-                    <button onClick={() => handleFavorite(post.id)}>Favorite</button>
-                    <button onClick={() => handleUnfavorite(post.id)}>Unfavorite</button>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
+
+        <div className="profile-container">
+          <div className="profile-photo">
+            <img src={user.img || '/default-profile.png'} alt="User" />
+          </div>
+
+          <div className="profile-info">
+            <h2>{user.name}</h2>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Bio:</strong> {user.bio}</p>
+          </div>
         </div>
+
+        {/* Edit Profile Modal */}
+        {showEditModal && (
+          <div className={`modal ${showEditModal ? 'show' : ''}`}>
+            <div className="modal-content">
+              <h2>Edit Profile</h2>
+              <form onSubmit={handleSubmit}>
+                <label>
+                  Name:
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Email:
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Password:
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Confirm Password:
+                  <input
+                    type="password"
+                    name="password_confirmation"
+                    value={formData.password_confirmation}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Bio:
+                  <textarea
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  Upload Image:
+                  <input type="file" name="img" onChange={handleFileChange} />
+                </label>
+                <button type="submit">Save Changes</button>
+                <button type="button" onClick={handleCloseModal}>Close</button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* User Posts */}
+        <UsersPosts />
       </div>
       <Footer />
     </>
   );
 };
 
-export default Profile;
+export default ProfilePage;

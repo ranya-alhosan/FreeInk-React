@@ -1,90 +1,178 @@
-.profile-container {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
+/* Profile Page */
+.profile-page {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
+  position: static;
+  z-index: 1;
+  font-family: 'Roboto', sans-serif;
 }
 
-.profile-header {
-  text-align: center;
-  margin-bottom: 30px;
+/* Profile Photo Above Banner */
+.profile-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: -120px auto 20px; /* Increase the negative margin to pull the image up */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
 }
 
-.profile-header h1 {
-  font-size: 2em;
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
+/* Banner */
+.banner {
+  background: linear-gradient(rgba(181, 214, 250, 0.7), rgba(2, 52, 106, 0.7)), 
+              url('../images/bg2.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  width: 100vw;
+  position: relative;
+  margin-bottom: 40px;
+  z-index: 1;
+}
+
+/* Edit Profile Icon Button */
+.edit-profile-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: transparent;
+  border: none;
+  font-size: 40px;
+  color: rgba(12, 47, 85, 0.7);
+  cursor: pointer;
+  margin-right: 20px;
+  transition: color 0.3s ease;
+}
+
+.edit-profile-btn:hover {
+  color: #007bff;
+}
+
+/* Profile Container */
+.profile-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* Profile Info */
 .profile-info {
+  max-width: 800px;
+  flex: 1;
+}
+
+.profile-info h2 {
+  margin-top: 0;
+}
+
+/* Modal (Edit Profile) */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.profile-form input, .profile-form textarea {
+  max-width: 600px;
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 4px;
-  border: 1px solid #ddd;
 }
 
-.profile-form button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.profile-display {
+.modal-content form {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
-.profile-display h2 {
-  font-size: 1.5em;
+.modal-content form label {
+  margin-bottom: 10px;
 }
 
-.profile-display button {
-  background-color: #4CAF50;
+.modal-content form input,
+.modal-content form textarea {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-content form button {
+  background-color: #28a745;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.posts-section, .favorites-section {
+.modal-content form button:hover {
+  background-color: #218838;
+}
+
+.modal-content form button[type="button"] {
+  background-color: #dc3545;
+}
+
+.modal-content form button[type="button"]:hover {
+  background-color: #c82333;
+}
+
+/* Footer */
+footer {
   margin-top: 40px;
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
 }
 
-.posts-list, .favorites-list {
-  list-style-type: none;
-  padding: 0;
+footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+/* Form Styling */
+label {
+  display: block;
+  margin-bottom: 10px;
 }
 
-.post-item, .favorites-list li {
-  background-color: white;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 button {
-  background-color: #007BFF;
+  background-color: #4CAF50;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
   cursor: pointer;
-  margin: 5px;
+  margin-top: 10px;
 }
 
-button:hover {
-  background-color: #0056b3;
+button[type="button"] {
+  background-color: red;
 }

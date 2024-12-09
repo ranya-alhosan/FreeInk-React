@@ -36,7 +36,7 @@ const Login = () => {
         localStorage.setItem("userUpdatedAt", response.data.user.updated_at);
         localStorage.setItem("userImg", response.data.user.img);
         localStorage.setItem("userBio", response.data.user.bio);
-        navigate("/"); // Redirect to home or profile page
+        navigate("/blogPost");// Redirect to home or profile page
       } else {
         // If status is not true in the response body
         setError(response.data.message || "Login failed. Please try again.");

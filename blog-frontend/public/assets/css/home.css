@@ -1,0 +1,29 @@
+.testimonial-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .testimonial-card .card-footer {
+    font-weight: bold;
+    text-align: right;
+  }
+  .testimonial-image {
+    width: 100px; 
+    height: 100px; 
+    object-fit: cover; 
+  }
+  .testimonial-image {
+    width: 100px;
+    height: 100px; 
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    transition: box-shadow 0.3s ease-in-out; 
+  }
+  
+  .testimonial-image:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
+  }
+  
