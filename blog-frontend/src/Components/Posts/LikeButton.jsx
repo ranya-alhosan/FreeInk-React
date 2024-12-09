@@ -10,6 +10,7 @@ const LikeButtonGroup = ({ postId, status, handleLikeDislike, isDisabled }) => {
           status === "like" ? "btn-success active" : "btn-outline-success"
         }`}
       >
+        
         👍 Like
       </button>
       <button
