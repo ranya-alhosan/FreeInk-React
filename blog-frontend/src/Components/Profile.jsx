@@ -85,80 +85,21 @@ import EditProfile from "./EditProfile ";
             <div className="profile-photo">
               <img src={user.img || '/default-profile.png'} alt="User" />
             </div>
-
-            <div className="profile-info">
+          </div>
+          <div className="profile-info">
               <h2>{user.name}</h2>
               <p><strong>Email:</strong> {user.email}</p>
               <p><strong>Bio:</strong> {user.bio}</p>
-              <p className="editProfile"><strong>            <EditProfile/>
+              <p className="editProfile"><strong><EditProfile/>
               </strong></p>
             </div>
-          </div>
-
           {/* Edit Profile Modal */}
-          {showEditModal && (
-            <div className={`modal ${showEditModal ? 'show' : ''}`}>
-              <div className="modal-content">
-                <h2>Edit Profile</h2>
-                <form onSubmit={handleSubmit}>
-                  <label>
-                    Name:
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Email:
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Password:
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Confirm Password:
-                    <input
-                      type="password"
-                      name="password_confirmation"
-                      value={formData.password_confirmation}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Bio:
-                    <textarea
-                      name="bio"
-                      value={formData.bio}
-                      onChange={handleChange}
-                    />
-                  </label>
-                  <label>
-                    Upload Image:
-                    <input type="file" name="img" onChange={handleFileChange} />
-                  </label>
-                  <button type="submit">Save Changes</button>
-                  <button type="button" onClick={handleCloseModal}>Close</button>
-                </form>
-              </div>
-            </div>
-          )}
-
           {/* User Posts */}
+          <p className="sectionDivider">Plogs</p>
           <UsersPosts />
           {/* <UserFavorites/> */}
+          <p className="sectionDivider">Favorites</p>
+
         </div>
         <Footer />
       </>
