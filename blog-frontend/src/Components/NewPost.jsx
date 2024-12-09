@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import apiClient from "../Api/apiClient.js";
 
 function NewPost() {
     const [title, setTitle] = useState("");
@@ -60,13 +60,11 @@ function NewPost() {
         formData.append("category_id", categoryId);
 
         try {
-            const response = await axios.post(
-                "http://localhost:8000/api/storepost",
+            const response = await apiClient.post("/storepost",
                 formData,
                 {
                     headers: {
                         "Content-Type": "multipart/form-data",
-                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
@@ -120,7 +118,6 @@ function NewPost() {
         }}
     ></button>
 </div>
-
                                 <div className="modal-body">
                                     {error && <div className="alert alert-danger">{error}</div>}
                                     {success && (

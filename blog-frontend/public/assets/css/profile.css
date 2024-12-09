@@ -173,6 +173,3 @@ button {
   margin-top: 10px;
 }
 
-button[type="button"] {
-  background-color: red;
-}

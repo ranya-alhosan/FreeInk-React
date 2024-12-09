@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "../Api/axios";
+import apiClient from "../Api/apiClient";
 import UsersPosts from "./UsersBlog";
 import "/public/assets/css/profile.css";
 import Head from './Head';
 import NavBar from './NavBar';
 import Footer from './Footer';
+// import UserFavorites from './UserFavorites';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -21,7 +22,7 @@ const ProfilePage = () => {
   });
 
   useEffect(() => {
-    axios.get('/profile')
+   apiClient.get('/profile')
       .then((response) => {
         setUser(response.data.data);
         setLoading(false);
@@ -57,7 +58,7 @@ const ProfilePage = () => {
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => formDataToSend.append(key, formData[key]));
     console.log(formDataToSend);
-    axios.put('/update', formDataToSend)
+    apiClient.put('/update', formDataToSend)
       .then((response) => {
         setUser(response.data.data);
         setShowEditModal(false);
@@ -79,7 +80,6 @@ const ProfilePage = () => {
             <i className="fas fa-edit"></i> {/* FontAwesome icon */}
           </button>
         </div>
-
         <div className="profile-container">
           <div className="profile-photo">
             <img src={user.img || '/default-profile.png'} alt="User" />
@@ -155,10 +155,11 @@ const ProfilePage = () => {
 
         {/* User Posts */}
         <UsersPosts />
+        {/* <UserFavorites/> */}
       </div>
       <Footer />
     </>
   );
 };
 
-export default ProfilePage;
+export default ProfilePage; 

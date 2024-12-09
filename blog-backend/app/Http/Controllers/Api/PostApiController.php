@@ -92,60 +92,51 @@ class PostApiController extends Controller
     // Update an existing post
     public function updatePost(Request $request, $id)
     {
-
+         // Logs all headers
+        Log::info($request->file('img'));   // Logs the uploaded file info (if any)
+        Log::info($request->all()); 
+                // Logs all request data
         try {
-
-            
-            $post = Post::find($id);
-
-            if (!$post || $post->user_id !== Auth::id()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Post not found or unauthorized',
-                ], 403);
-            }
-
             $validatedData = $request->validate([
-                'title' => 'nullable|string|max:255',
-                'content' => 'nullable|string',
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+                'category_id' => 'required|exists:categories,id',
                 'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'category_id' => 'nullable|exists:categories,id',
             ]);
 
+            $imagePath = null;
             if ($request->hasFile('img')) {
-                // Delete the old image if it exists
-                if ($post->img) {
-                    Storage::disk('public')->delete($post->img);
-                }
-
-                // Store the new image
+                // Store the uploaded image in the 'public/posts' directory
                 $imagePath = $request->file('img')->store('posts', 'public');
-
-                $post->img = $imagePath; // Update the image path
             }
+            $post = Post::find($id); // Find the post by ID
 
-            // Update the other fields
-            $post->update(array_filter($validatedData));
+            $post->update([
+                'title' => $validatedData['title'],
+                'content' => $validatedData['content'],
+                //'img' => $imagePath ? asset('storage/' . $imagePath) : null, // Save the image path
+                'user_id' => Auth::id(),
+                'category_id' => $validatedData['category_id'],
+            ]);
 
             return response()->json([
                 'success' => true,
                 'data' => $post,
-            ], 200);
+            ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'The image must be of type: jpeg, png, jpg, gif. Please check the file extension.',
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Error updating post: ' . $e->getMessage());
+            Log::error('Error creating post: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update post. Please try again later.',
+                'message' => 'Failed to create post. Please try again later.',
             ], 500);
         }
-        
     }
 
 

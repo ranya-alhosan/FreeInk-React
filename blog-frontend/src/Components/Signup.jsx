@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../Api/axios"; // Import Axios instance
+import apiClient from "../Api/apiClient"; // Import apiClient instance
 import { useNavigate } from "react-router-dom";
 import "/public/assets/css/Login.css";
 
@@ -24,7 +24,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       // Sending signup request to the backend (register endpoint)
-      const response = await axios.post("/register", formData);
+      const response = await apiClient.post("/register", formData);
 
       console.log("Signup response:", response.data);
 

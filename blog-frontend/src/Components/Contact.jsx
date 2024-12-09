@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../Api/axios";
+import apiClient from "../Api/apiClient";
 import Head from './Head';
 import NavBar from './NavBar';
 import Footer from './Footer';
@@ -24,12 +24,11 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/contact", formData);
+      const response = await apiClient.post("/contact", formData);
       setFeedback({
         success: true,
         message: response.data.message || "Contact form submitted successfully!",
       });
-      
       // Reset form after successful submission
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {

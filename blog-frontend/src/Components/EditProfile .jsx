@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import axios from "../Api/axios";
+import apiClient from "../Api/apiClient";
 import { useNavigate } from "react-router-dom";
 
 const EditProfile = () => {
@@ -12,7 +12,7 @@ const EditProfile = () => {
     // Fetch user profile data for editing
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get('/profile');
+        const response = await apiClient.get('/profile');
         setUserData(response.data.data);
       } catch (error) {
         console.error("Error fetching user data", error);
@@ -26,7 +26,7 @@ const EditProfile = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.put('/update', userData);
+      const response = await apiClient.put('/update', userData);
       alert("Profile updated successfully!");
       navigate('/profile');
     } catch (error) {

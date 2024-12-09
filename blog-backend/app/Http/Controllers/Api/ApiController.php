@@ -86,6 +86,7 @@ class ApiController extends Controller
     // Profile function (GET)
     public function profile()
     {
+        //return 'test';
         try {
             $data = auth()->user();
 

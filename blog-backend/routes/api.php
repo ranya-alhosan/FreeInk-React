@@ -22,9 +22,9 @@ Route::post('/register', [App\Http\Controllers\Api\ApiController::class, 'regist
 Route::post('/login', [App\Http\Controllers\Api\ApiController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/profile', [App\Http\Controllers\Api\ApiController::class, 'profile']);
     Route::get('/logout', [App\Http\Controllers\Api\ApiController::class, 'logout']);
     Route::put('/update', [App\Http\Controllers\Api\ApiController::class, 'updateProfile']);
+    Route::get('/profile', [App\Http\Controllers\Api\ApiController::class, 'profile']);
 
     Route::get('/posts', [App\Http\Controllers\Api\PostApiController::class, 'index']);
     Route::post('/storepost', [App\Http\Controllers\Api\PostApiController::class, 'storePost']);
@@ -39,10 +39,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
     Route::get('/categories', [App\Http\Controllers\Api\CategoryApiController::class, 'index']);
-   
+
     Route::post('/likes', [App\Http\Controllers\Api\LikeApiController::class, 'like']);
     Route::get('/likes', [App\Http\Controllers\Api\LikeApiController::class, 'index']);
- 
+
     Route::post('/favorites', [App\Http\Controllers\Api\FavoriteApiController::class, 'favorite']);
 
 });

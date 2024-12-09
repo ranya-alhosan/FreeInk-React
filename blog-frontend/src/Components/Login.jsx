@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../Api/axios";
+import apiClient from "../Api/apiClient.js";
 import { useNavigate } from "react-router-dom";
 import "/public/assets/css/Login.css";
 
@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       // Sending login request to the backend
-      const response = await axios.post("/login", formData);
+      const response = await apiClient.post("/login", formData);
   
       // Log the response to debug
       console.log("Login response:", response.data);
