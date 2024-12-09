@@ -8,17 +8,17 @@ function Footer() {
       <div className="footer_section layout_padding">
         <div className="container">
           {/* Footer logo */}
-          <div className="footer_logo">
+          <div className="footer_logo text-light">
             <p>FreeInk</p>
           </div>
           {/* Footer menu */}
-          <div className="footer_menu">
+          <div className="footer_menu ">
             <ul>
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/about">About</Link></li>
-              <li><Link to="/blogPost">Blog</Link></li>
-              <li><Link to="/features">Features</Link></li>
-              <li><Link to="/contact">Contact Us</Link></li>
+              <li><Link className=" text-light"  to="/">Home</Link></li>
+              <li><Link className=" text-light" to="/about">About</Link></li>
+              <li><Link className=" text-light" to="/blogPost">Blog</Link></li>
+              <li><Link className=" text-light" to="/features">Features</Link></li>
+              <li><Link className=" text-light" to="/contact">Contact Us</Link></li>
             </ul>
           </div>
           {/* Contact menu */}
@@ -28,13 +28,13 @@ function Footer() {
                 <a href="#"><img src="/assets/images/call-icon.png" alt="Call Icon" /></a>
               </li>
               <li>
-                <a href="tel:+011234567890">Call : +01 1234567890</a>
+                <a  className=" text-light" href="tel:+011234567890">Call : +01 1234567890</a>
               </li>
               <li>
-                <a href="#"><img src="/assets/images/mail-icon.png" alt="Mail Icon" /></a>
+                <a  className=" text-light"href="#"><img src="/assets/images/mail-icon.png" alt="Mail Icon" /></a>
               </li>
               <li>
-                <a href="mailto:demo@gmail.com">demo@gmail.com</a>
+                <a  className=" text-light"href="mailto:demo@gmail.com">demo@gmail.com</a>
               </li>
             </ul>
           </div>

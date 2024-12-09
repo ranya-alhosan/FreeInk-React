@@ -92,6 +92,7 @@ class PostApiController extends Controller
     // Update an existing post
     public function updatePost(Request $request, $id)
     {
+
         try {
 
             
