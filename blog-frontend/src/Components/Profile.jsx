@@ -98,7 +98,7 @@ import EditProfile from "./EditProfile ";
           <p className="sectionDivider">Plogs</p>
           <UsersPosts />
           {/* <UserFavorites/> */}
-          <p className="sectionDivider">Favorites</p>
+          <p className="sectionDivider"></p>
 
         </div>
         <Footer />
