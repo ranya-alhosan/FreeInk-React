@@ -9,7 +9,9 @@ const LikeButtonGroup = ({ postId, status, handleLikeDislike, isDisabled }) => {
         className={`btn ${status === "like" ? "btn-success active" : "btn-outline-success"}`}
         style={{ fontSize: "1.1rem", padding: "8px 15px", borderRadius: "20px" }}
       >
+
         <i className="bi bi-hand-thumbs-up"></i> Like
+
       </button>
       <button
         disabled={isDisabled}

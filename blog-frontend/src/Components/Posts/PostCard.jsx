@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import apiClient from "../../Api/apiClient";
 import CommentSection from "./CommentSection";
@@ -45,6 +46,7 @@ function PostCard({ post, user, handleLikeDislike, setPosts }) {
     }
   };
 
+
   return (
     <div className="card mb-4 shadow-sm border-light rounded">
       <div className="card-header d-flex justify-content-between align-items-center">
@@ -73,6 +75,7 @@ function PostCard({ post, user, handleLikeDislike, setPosts }) {
         style={{ height: "250px", objectFit: "cover" }}
       />
       <div className="card-body">
+
         <h5 className="card-title">{post.title}</h5>
         <p className="card-text">{post.content}</p>
 
@@ -97,6 +100,7 @@ function PostCard({ post, user, handleLikeDislike, setPosts }) {
             isDisabled={false}
           />
         </div>
+
       </div>
     </div>
   );

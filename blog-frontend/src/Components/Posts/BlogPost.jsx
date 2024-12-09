@@ -58,11 +58,13 @@ function BlogPost() {
       });
 
       if (response.data.success) {
+
         setPosts((prevPosts) =>
           prevPosts.map((post) =>
             post.id === postId ? { ...post, status: response.data.status } : post
           )
         );
+
         localStorage.setItem(`post_${postId}_status`, response.data.status);
       }
     } catch (error) {
@@ -70,6 +72,7 @@ function BlogPost() {
     }
   };
 
+  // تصفية المنشورات حسب الفئة وكلمة البحث
   const filteredPosts = posts.filter((post) => {
     const matchesCategory = selectedCategory ? post.category?.name === selectedCategory : true;
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());

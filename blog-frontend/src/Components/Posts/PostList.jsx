@@ -1,46 +1,33 @@
 import React, { useState, useEffect } from "react";
-import apiClient from "../../Api/apiClient";
 import PostCard from "./PostCard";
 
-function PostList({ posts, user }) {
-  const [localPosts, setPosts] = useState(posts);
 
-  const handleLikeDislike = async (action, postId) => {
-    try {
-      const response = await apiClient.post(`/likes`, {
-        post_id: postId,
-        status: action,
-      });
+function PostList({ posts, user, query }) {
+  const [filteredPosts, setFilteredPosts] = useState(posts);
 
-      if (response.data.success) {
-        console.log(response.data.message);
-
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.id === postId ? { ...post, status: response.data.status } : post
-          )
-        );
-
-        localStorage.setItem(`post_${postId}_status`, response.data.status);
-      } else {
-        console.error("Failed to update post status.");
-      }
-    } catch (error) {
-      console.error("Error updating like/dislike:", error);
+  useEffect(() => {
+    if (query) {
+      setFilteredPosts(
+        posts.filter((post) =>
+          post.title.toLowerCase().includes(query.toLowerCase()) || 
+          post.content.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredPosts(posts); // إذا كان الاستعلام فارغًا، عرض جميع المنشورات
     }
-  };
+  }, [query, posts]); // إعادة الفلترة عند تغيير الاستعلام أو المنشورات
 
   return (
     <div className="post-list">
-      {localPosts.map((post) => (
-        <PostCard
-          key={post.id}
-          post={post}
-          user={user}
-          handleLikeDislike={handleLikeDislike}
-          setPosts={setPosts}
-        />
-      ))}
+
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map((post) => (
+          <PostCard key={post.id} post={post} user={user} />
+        ))
+      ) : (
+        <p>No posts found.</p>
+      )}
     </div>
   );
 }
