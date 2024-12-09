@@ -26,7 +26,7 @@ class FavoriteApiController extends Controller
         $favorite = Favorite::where('user_id', $validatedData['user_id'])->with('post','user')
             ->where('post_id', $validatedData['post_id'])
             ->orderby('created_at', 'desc')
-            ->get();
+            ->first();
 
         if ($favorite) {
             // Update the existing favorite record
@@ -76,6 +76,33 @@ class FavoriteApiController extends Controller
             'message' => 'Failed to handle favorite. Please try again later.',
         ], 500);
     }
+}
+
+public function getFavorite()
+{
+    try {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Get the favorite posts for the user   
+        $favorite = Favorite::where('user_id', $user->id)->with('post','user')
+            ->orderby('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $favorite,
+        ], 200);        
+    } catch (\Exception $e) {
+        // General errors
+        Log::error('Error handling favorite: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to handle favorite. Please try again later.',
+        ], 500);
+    }   
+
 }
 
 }
