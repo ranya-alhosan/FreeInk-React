@@ -41,11 +41,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/categories', [App\Http\Controllers\Api\CategoryApiController::class, 'index']);
 
     Route::post('/likes', [App\Http\Controllers\Api\LikeApiController::class, 'like']);
-    Route::get('/likes', [App\Http\Controllers\Api\LikeApiController::class, 'index']);
+    Route::get('/getlikes', [App\Http\Controllers\Api\LikeApiController::class, 'index']);
 
     Route::post('/favorites', [App\Http\Controllers\Api\FavoriteApiController::class, 'favorite']);
-
 });
 
 Route::post('/contact', [App\Http\Controllers\Api\ContactApiController::class, 'contact']);
-
