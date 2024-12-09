@@ -20,7 +20,7 @@ function NavBar() {
     if (token && !localStorage.getItem('hasShownWelcome')) {
       // Show the toast only if it's the first login
       Swal.fire({
-        title: `Welcome, ${storedUserName}`, // Display the user's name
+        title: `Welcome, ${storedUserName || 'User'}`, // Display the user's name
         icon: 'success',
         toast: true, // Enable toast style
         position: 'top-end', // Position the toast at the top right
@@ -32,7 +32,7 @@ function NavBar() {
       // Set a flag in localStorage to indicate the welcome message has been shown
       localStorage.setItem('hasShownWelcome', 'true');
     }
-  }, [isLoggedIn]); // Add isLoggedIn to the dependency array to trigger effect
+  }, [isLoggedIn]);
 
   // Handle logout functionality with SweetAlert2 confirmation
   const handleLogout = () => {
@@ -60,7 +60,7 @@ function NavBar() {
     <div className="header_section">
       <div className="container-fluid header_main">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <a className="logo" href="/">FreeInk</a>
+          <Link className="logo" to="/">FreeInk</Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -74,46 +74,50 @@ function NavBar() {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
+              {/* Home or Blog */}
+              <li className="nav-item me-3">
+                <Link className="nav-link" to={isLoggedIn ? "/blogPost" : "/"}>{isLoggedIn ? "Blog" : "Home"}</Link>
               </li>
-              <li className="nav-item">
+              
+              {/* About */}
+              <li className="nav-item me-3">
                 <Link className="nav-link" to="/about">About</Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/blogPost">Blog</Link>
-              </li>
-              <li className="nav-item">
+
+              {/* Contact */}
+              <li className="nav-item  me-3">
                 <Link className="nav-link" to="/contact">Contact Us</Link>
               </li>
-              {/* Conditionally render Login or Logout link */}
-              <li className="nav-item">
+
+              {/* Login/Logout */}
+              <li className="nav-item  me-3">
                 {isLoggedIn ? (
                   <span
                     className="nav-link"
                     onClick={handleLogout}
-                    style={{ cursor: 'pointer' }} // Add cursor pointer to make it clickable
+                    style={{ cursor: 'pointer' }}
                   >
-                    <FontAwesomeIcon icon={faSignOutAlt} /> {/* Logout icon */}
+                    <FontAwesomeIcon icon={faSignOutAlt} /> Logout
                   </span>
                 ) : (
                   <Link className="nav-link" to="/login">
-                    <FontAwesomeIcon icon={faSignInAlt} /> {/* Login icon */}
+                    <FontAwesomeIcon icon={faSignInAlt} /> Login
                   </Link>
                 )}
               </li>
-              {/* Conditionally render profile link */}
+
+              {/* Profile */}
               {isLoggedIn && (
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/profile">
-                      <img
-                        src="public/assets/images/user.png"
-                        alt="Profile"
-                        width={30}
-                        style={{ borderRadius: '50%' }}
-                      />
-                    </Link>
-                  </li>
+                <li className="nav-item  me-3">
+                  <Link className="nav-link" to="/profile">
+                    <img
+                      src="public/assets/images/user.png"
+                      alt="Profile"
+                      width={30}
+                      style={{ borderRadius: '50%' }}
+                    />
+                  </Link>
+                </li>
               )}
             </ul>
           </div>
