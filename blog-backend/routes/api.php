@@ -18,31 +18,24 @@ use App\Http\Controllers\Api\ApiController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
 Route::post('/register', [App\Http\Controllers\Api\ApiController::class, 'register']);
 Route::post('/login', [App\Http\Controllers\Api\ApiController::class, 'login']);
-
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/logout', [App\Http\Controllers\Api\ApiController::class, 'logout']);
     Route::put('/update', [App\Http\Controllers\Api\ApiController::class, 'updateProfile']);
     Route::get('/profile', [App\Http\Controllers\Api\ApiController::class, 'profile']);
-
     Route::get('/posts', [App\Http\Controllers\Api\PostApiController::class, 'index']);
     Route::post('/storepost', [App\Http\Controllers\Api\PostApiController::class, 'storePost']);
     Route::put('/updatepost/{id}', [App\Http\Controllers\Api\PostApiController::class, 'updatePost']);
     Route::delete('/deletepost/{id}', [App\Http\Controllers\Api\PostApiController::class, 'deletePost']);
-
-
     Route::get('/comments/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'index']);
     Route::post('/storecomment', [App\Http\Controllers\Api\CommentApiController::class, 'storeComment']);
     Route::put('/updatecomment/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'updateComment']);
     Route::delete('/deletecomment/{id}', [App\Http\Controllers\Api\CommentApiController::class, 'deleteComment']);
-
-
     Route::get('/categories', [App\Http\Controllers\Api\CategoryApiController::class, 'index']);
-
     Route::post('/likes', [App\Http\Controllers\Api\LikeApiController::class, 'like']);
     Route::get('/getlikes', [App\Http\Controllers\Api\LikeApiController::class, 'index']);
-
     Route::post('/favorites', [App\Http\Controllers\Api\FavoriteApiController::class, 'favorite']);
 
     Route::get('/favorites', [App\Http\Controllers\Api\FavoriteApiController::class, 'getFavorite']);
