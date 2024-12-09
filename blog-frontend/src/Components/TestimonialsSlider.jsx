@@ -24,12 +24,12 @@ const TestimonialsSlider = () => {
       text: "FreeInk is the perfect place to unleash your creativity and connect with other writers.",
     },
     {
-      img: "/assets/images/per5.jpg",
+      img: "/assets/images/per3.jpg",
       name: "Michael Brown",
       text: "This platform has boosted my confidence in sharing my stories. Highly recommended!",
     },
     {
-      img: "/assets/images/per6.jpg",
+      img: "/assets/images/per2.jpg",
       name: "Sarah Wilson",
       text: "I love how FreeInk brings writers together. It’s a game changer!",
     },
