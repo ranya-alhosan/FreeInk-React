@@ -16,7 +16,6 @@ function Footer() {
             <ul>
               <li><Link className=" text-light"  to="/">Home</Link></li>
               <li><Link className=" text-light" to="/about">About</Link></li>
-              <li><Link className=" text-light" to="/blogPost">Blog</Link></li>
               <li><Link className=" text-light" to="/features">Features</Link></li>
               <li><Link className=" text-light" to="/contact">Contact Us</Link></li>
             </ul>

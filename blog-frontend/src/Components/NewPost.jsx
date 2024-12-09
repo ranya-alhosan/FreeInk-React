@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import apiClient from "../Api/apiClient.js";
+import axios from "axios";
 
-function NewPost() {
+function NewPost({ onNewPost }) {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [img, setImg] = useState(null);
@@ -9,38 +9,23 @@ function NewPost() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [showModal, setShowModal] = useState(false);
-
     const categories = [
-        { id: 1, name: "Health & Sport", icon: "🏋️" },
-        { id: 2, name: "Romance & Relationships", icon: "❤️" },
-        { id: 3, name: "Food & Recipes", icon: "🍳" },
-        { id: 4, name: "Travel & Adventure", icon: "✈️" },
-        { id: 5, name: "Education & Learning", icon: "📚" },
-        { id: 6, name: "Politics & Current Affairs", icon: "🗳️" },
-        { id: 7, name: "Art & Creativity", icon: "🎨" },
-        { id: 8, name: "History & Culture", icon: "🏛️" },
+        { id: 1, name: "Health & Sport" },
+        { id: 2, name: "Romance & Relationships" },
+        { id: 3, name: "Food & Recipes" },
+        { id: 4, name: "Travel & Adventure" },
+        { id: 5, name: "Education & Learning" },
+        { id: 6, name: "Politics & Current Affairs" },
+        { id: 7, name: "Art & Creativity" },
+        { id: 8, name: "History & Culture" },
     ];
-
-    const handleModalToggle = () => {
-        setShowModal(!showModal);
-        document.body.style.overflow = showModal ? "auto" : "hidden"; 
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
         setSuccess("");
 
-        if (!title.trim()) {
-            setError("Title is required.");
-            return;
-        }
-        if (!content.trim()) {
-            setError("Content is required.");
-            return;
-        }
-        if (!categoryId) {
-            setError("Please select a category.");
+        if (!title.trim() || !content.trim() || !categoryId) {
+            setError("All fields are required.");
             return;
         }
 
@@ -53,134 +38,129 @@ function NewPost() {
         const formData = new FormData();
         formData.append("title", title);
         formData.append("content", content);
-        
-        if (img) {
-            formData.append("img", img);
-        }
+        if (img) formData.append("img", img);
         formData.append("category_id", categoryId);
 
         try {
-            const response = await apiClient.post("/storepost",
+            const response = await axios.post(
+                "http://localhost:8000/api/storepost",
                 formData,
                 {
                     headers: {
                         "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
+
             setSuccess("Post added successfully!");
             setTitle("");
             setContent("");
             setImg(null);
             setCategoryId("");
-            handleModalToggle();
-            window.location.href = "http://localhost:5173/blogPost";
+            setShowModal(false);
+            window.location.reload();
+            onNewPost(response.data);
         } catch (error) {
-            console.error("Error adding post:", error);
-            setError(
-                error.response?.data?.message || "An error occurred. Please try again."
-            );
+            setError("An error occurred. Please try again.");
         }
     };
-
     return (
         <>
-            <div className="container py-5">
+            <div className="container py-5 text-center">
                 <button
-                    className="btn btn-primary rounded-pill mb-3 " 
-                    onClick={handleModalToggle}
+                    className="btn rounded-pill px-4 py-2 shadow-sm"
+                    style={{ backgroundColor: "#0c1045", color: "#fff" }}
+                    onClick={() => setShowModal(true)}
                 >
-                    Add New Post
+                    <i className="bi bi-plus-circle me-2"></i> Add New Post
                 </button>
 
                 {showModal && (
                     <div className="modal show d-block" tabIndex="-1">
-                        <div className="modal-dialog modal-dialog-scrollable">
+                        <div className="modal-dialog modal-lg">
                             <div className="modal-content">
-                            <div className="modal-header" style={{ backgroundColor: "#007bff", borderBottom: "2px solid #0056b3" }}>
-    <h5
-        className="modal-title"
-        style={{
-            color: "#ffffff",
-            fontWeight: "bold", 
-            fontSize: "1.25rem", 
-        }}
-    >
-        Add New Post
-    </h5>
-    <button
-        type="button"
-        className="btn-close"
-        onClick={handleModalToggle}
-        style={{
-            backgroundColor: "#0056b3", 
-            border: "none",
-        }}
-    ></button>
-</div>
+                                <div
+                                    className="modal-header text-white"
+                                    style={{ backgroundColor: "#0c1045" }}
+                                >
+                                    <h5 className="modal-title text-white">Add New Post</h5>
+                                    <button
+                                        type="button"
+                                        className="btn-close btn-close-white"
+                                        onClick={() => setShowModal(false)}
+                                    ></button>
+                                </div>
                                 <div className="modal-body">
-                                    {error && <div className="alert alert-danger">{error}</div>}
+                                    {error && (
+                                        <div className="alert alert-danger">
+                                            <i className="bi bi-exclamation-triangle me-2"></i>
+                                            {error}
+                                        </div>
+                                    )}
                                     {success && (
-                                        <div className="alert alert-success">{success}</div>
+                                        <div className="alert alert-success">
+                                            <i className="bi bi-check-circle me-2"></i>
+                                            {success}
+                                        </div>
                                     )}
                                     <form onSubmit={handleSubmit}>
-                                        <div className="mb-3">
-                                            <label className="form-label">Title</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
-                                                placeholder="Enter your post title"
-                                            />
+                                        <div className="row d-flex align-items-center gap-3">
+                                            <div className="col-md-5 mb-3">
+                                                <label className="form-label">Title</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control rounded-pill shadow-sm"
+                                                    value={title}
+                                                    onChange={(e) => setTitle(e.target.value)}
+                                                    placeholder="Post title"
+                                                />
+                                            </div>
+
+                                            <div className="col-md-6 mb-3">
+                                                <label className="form-label">Image</label>
+                                                <input
+                                                    type="file"
+                                                    className="form-control rounded-pill shadow-sm"
+                                                    onChange={(e) => setImg(e.target.files[0])}
+                                                />
+                                            </div>
                                         </div>
+
                                         <div className="mb-3">
                                             <label className="form-label">Content</label>
                                             <textarea
-                                                className="form-control"
+                                                className="form-control shadow-sm"
                                                 rows="4"
                                                 value={content}
                                                 onChange={(e) => setContent(e.target.value)}
-                                                placeholder="Write your post content here"
+                                                placeholder="Write content here..."
                                             ></textarea>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Image</label>
-                                            <input
-                                                type="file"
-                                                className="form-control"
-                                                onChange={(e) => setImg(e.target.files[0])}
-                                            />
-                                        </div>
-                                        <div className="mb-3">
+                                        <div className="col-md-6 mb-3 d-flex flex-column align-items-start">
                                             <label className="form-label">Category</label>
-                                            <div className="row">
+                                            <select
+                                                className="form-select rounded-pill shadow-sm"
+                                                value={categoryId}
+                                                onChange={(e) => setCategoryId(e.target.value)}
+                                            >
+                                                <option value="">Select category</option>
                                                 {categories.map((category) => (
-                                                    <div key={category.id} className="col-6 col-md-3 mb-3">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setCategoryId(category.id)}
-                                                            className={`btn btn-outline-primary d-flex flex-column align-items-center justify-content-center p-3 w-100 ${
-                                                                categoryId === category.id
-                                                                    ? "bg-primary text-white"
-                                                                    : "bg-light text-primary"
-                                                            }`}
-                                                            style={{
-                                                                height: "120px",
-                                                                borderRadius: "10px",
-                                                            }}
-                                                        >
-                                                            <span className="fs-4">{category.icon}</span>
-                                                            <span className="small" style={{ whiteSpace: "pre-line" }}>
-                                                                {category.name.split(" ").join("\n")}
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                                    <option key={category.id} value={category.id}>
+                                                        {category.name}
+                                                    </option>
                                                 ))}
-                                            </div>
+                                            </select>
                                         </div>
-                                        <button type="submit" className="btn btn-primary w-100">
-                                            Submit
+                                        <button
+                                            type="submit"
+                                            className="btn w-500 shadow-sm rounded-pill"
+                                            style={{
+                                                backgroundColor: "#0c1045",
+                                                color: "#fff",
+                                            }}
+                                        >
+                                            <i className="bi bi-send-fill me-2"></i> Submit
                                         </button>
                                     </form>
                                 </div>

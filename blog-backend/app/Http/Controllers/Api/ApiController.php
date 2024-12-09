@@ -132,7 +132,6 @@ class ApiController extends Controller
                 'email' => 'nullable|email|unique:users,email,' . auth()->id(),
                 'password' => 'nullable|confirmed|min:8',
                 'bio' => 'nullable|string',
-                'img' => 'nullable',
             ]);
 
             // Get the authenticated user

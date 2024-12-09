@@ -1,0 +1,118 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --background-color: #f8f9fa;
+    --text-color: #333;
+    --accent-color: #3498db;
+  }
+  
+  body {
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  .card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+  }
+  
+  .card img {
+    height: 250px;
+    width: 100%;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .card-text {
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+  }
+  
+  button {
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+  }
+  
+  button.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+  }
+  
+  button.btn-primary:hover {
+    background-color: #2980b9;
+    opacity: 0.9;
+  }
+  
+  button.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  button.btn-danger:hover {
+    background-color: #c0392b;
+    opacity: 0.9;
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modal-body img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+  
+    .button-container {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
