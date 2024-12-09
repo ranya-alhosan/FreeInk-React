@@ -1,25 +1,41 @@
 import React from "react";
 
 function CategoryFilter({ categories, selectedCategory, setSelectedCategory }) {
+  const handleCheckboxChange = (category) => {
+    setSelectedCategory(category === selectedCategory ? "" : category);
+  };
+
   return (
-    <div className="mb-4">
-      <div className="d-flex flex-wrap gap-2">
-        <button
-          className={`btn btn-${!selectedCategory ? "primary" : "outline-primary"}`}
-          onClick={() => setSelectedCategory("")}
-        >
-          All Categories
-        </button>
+    <div className="category-filter">
+      <h5 className="filter-title">Filter by Category</h5>
+      <ul className="list-unstyled">
+        <li>
+          <label className="d-flex align-items-center">
+            <input
+              type="radio"
+              name="category"
+              checked={!selectedCategory}
+              onChange={() => setSelectedCategory("")}
+              className="form-check-input me-2"
+            />
+            All Categories
+          </label>
+        </li>
         {categories.map((category) => (
-          <button
-            key={category}
-            className={`btn btn-${selectedCategory === category ? "primary" : "outline-primary"}`}
-            onClick={() => setSelectedCategory(category)}
-          >
-            {category}
-          </button>
+          <li key={category}>
+            <label className="d-flex align-items-center">
+              <input
+                type="radio"
+                name="category"
+                checked={selectedCategory === category}
+                onChange={() => handleCheckboxChange(category)}
+                className="form-check-input me-2"
+              />
+              {category}
+            </label>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

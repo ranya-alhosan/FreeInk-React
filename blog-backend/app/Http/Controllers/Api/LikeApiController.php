@@ -64,7 +64,10 @@ class LikeApiController extends Controller
     function index()
     {
         try {
-            $likes = Like::with(['user', 'post'])->get();
+            $userId = Auth::id(); // Get the current logged-in user ID
+            $likes = Like::where('user_id', $userId)
+                ->with('post') // Ensure post data is included
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -72,6 +75,10 @@ class LikeApiController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching likes: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching likes.',
+            ], 500);
         }
     }
 }

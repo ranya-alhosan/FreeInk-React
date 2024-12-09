@@ -3,7 +3,7 @@ import apiClient from "../../Api/apiClient";
 import PostCard from "./PostCard";
 
 function PostList({ posts, user }) {
-  const [localPosts, setPosts] = useState(posts); // استخدام نسخة محلية من المنشورات
+  const [localPosts, setPosts] = useState(posts);
 
   const handleLikeDislike = async (action, postId) => {
     try {
@@ -15,14 +15,12 @@ function PostList({ posts, user }) {
       if (response.data.success) {
         console.log(response.data.message);
 
-        // تحديث الحالة في الواجهة
         setPosts((prevPosts) =>
           prevPosts.map((post) =>
             post.id === postId ? { ...post, status: response.data.status } : post
           )
         );
 
-        // تخزين الحالة في localStorage
         localStorage.setItem(`post_${postId}_status`, response.data.status);
       } else {
         console.error("Failed to update post status.");
@@ -39,8 +37,8 @@ function PostList({ posts, user }) {
           key={post.id}
           post={post}
           user={user}
-          handleLikeDislike={handleLikeDislike} // تمرير الدالة
-          setPosts={setPosts} // تمرير setPosts
+          handleLikeDislike={handleLikeDislike}
+          setPosts={setPosts}
         />
       ))}
     </div>

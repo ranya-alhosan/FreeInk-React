@@ -1,15 +1,25 @@
-.category-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+/* في src/assets/css/CategoryFilter.css */
+.btn-outline-primary {
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 25px;
+  transition: background-color 0.3s ease;
 }
 
-.category-btn {
-    padding: 10px 20px;
-    font-size: 14px;
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: white;
 }
 
-.category-btn:hover {
-    background-color: #0056b3 !important; 
+.btn-primary {
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 25px;
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  color: white;
 }
