@@ -10,7 +10,6 @@ use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Facades\Storage;
-
 class ApiController extends Controller
 {
     // Register function (POST,formData)
@@ -132,7 +131,6 @@ class ApiController extends Controller
                 'email' => 'nullable|email|unique:users,email,' . auth()->id(),
                 'password' => 'nullable|confirmed|min:8',
                 'bio' => 'nullable|string',
-                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
             // Get the authenticated user
