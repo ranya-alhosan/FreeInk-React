@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../api/axios";  // Import the axios instance from your axios.js file
+import axios from "../api/axios";
 import Head from "./Head";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
@@ -21,10 +21,8 @@ function BlogPost() {
     const [error, setError] = useState("");
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState({});
-    const [likes, setLikes] = useState({});
-    const [favorites, setFavorites] = useState({});
-    const [likeCounts, setLikeCounts] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [likedDislikedPosts, setLikedDislikedPosts] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     // Search and Filter States
     const [searchQuery, setSearchQuery] = useState("");
@@ -231,46 +229,36 @@ function BlogPost() {
                                             {/* استبدال الأزرار بـ LikeButton */}
                                             <LikeButton
                                                 postId={post.id}
-                                                initialStatus={likes[post.id]}
-                                                onStatusChange={(newStatus) => {
-                                                    const updatedLikes = {
-                                                        ...likes,
-                                                        [post.id]: newStatus
-                                                    };
-                                                    setLikes(updatedLikes);
-                                                }}
+                                                status={
+                                                    likedDislikedPosts.find((p) => p.id === post.id)?.status || "none"
+                                                }
+                                                handleLikeDislike={handleLikeDislike}
+                                                isDisabled={loading}
                                             />
-                                            <button
-                                                className={`btn btn-${favorites[post.id] === '1' ? 'warning' : 'outline-warning'}`}
-                                                onClick={() => handleFavorite(post.id)}
-                                            >
-                                                <i className="fas fa-star"></i>
-                                                {favorites[post.id] === '1' ? 'Unfavorite' : 'Favorite'}
-                                            </button>
                                         </div>
 
                                         {/* Comments Section */}
                                         <div className="mt-4">
                                             {renderComments(post.id)}
                                             <div className="form-group">
-                                                <textarea
-                                                    className="form-control"
-                                                    rows="2"
-                                                    placeholder="Add a comment..."
+                                            <textarea
+                                                className="form-control"
+                                                rows="2"
+                                                placeholder="Add a comment..."
                                                     value={newComment[post.id] || ''}
-                                                    onChange={(e) =>
-                                                        setNewComment((prev) => ({
-                                                            ...prev,
+                                                onChange={(e) =>
+                                                    setNewComment((prev) => ({
+                                                        ...prev,
                                                             [post.id]: e.target.value
-                                                        }))
-                                                    }
-                                                />
+                                                    }))
+                                                }
+                                            />
                                                 <button
                                                     className="btn btn-primary btn-sm mt-2"
                                                     onClick={() => handleAddComment(post.id)}
                                                 >
-                                                    Add Comment
-                                                </button>
+                                                Add Comment
+                                            </button>
                                             </div>
                                         </div>
                                     </div>
