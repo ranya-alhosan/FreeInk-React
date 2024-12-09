@@ -1,0 +1,153 @@
+/* Modern Minimalist Profile Edit CSS */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --background-color: #ecf0f1;
+    --text-color: #333;
+    --input-border-color: #bdc3c7;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.edit-profile-btn{
+    background-color: #34608d;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(44, 62, 80, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    transform: scale(0.9);
+    opacity: 0;
+    animation: fadeInScale 0.3s forwards;
+}
+
+@keyframes fadeInScale {
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-content h3 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-size: 26px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.modal-content h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.modal-content form div {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--secondary-color);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--input-border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+}
+
+.modal-content textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+    margin-top: 10px;
+}
+
+.modal-content button:hover {
+    background-color:#66a4e1 ;
+    transform: translateY(-2px);
+}
+
+.modal-content > button:last-child {
+    background-color: #e74c3c;
+    margin-top: 15px;
+}
+
+.modal-content > button:last-child:hover {
+    background-color: #c0392b;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 600px) {
+    .modal-content {
+        width: 95%;
+        padding: 25px;
+        margin: 0 10px;
+    }
+}
+
+/* Accessibility and Focus States */
+*:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
